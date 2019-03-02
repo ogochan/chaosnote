@@ -105,7 +105,6 @@ function create_connected_socket(port, type, identity = null) {
 async function  make_config(key, connection_file_name) {
 	console.log("make_config");
 	let ports = await make_ports();
-	console.log("make_config*");
 
 	let config = ports;
 
@@ -119,8 +118,66 @@ async function  make_config(key, connection_file_name) {
 	return (ports);
 }
 
-let kernels = {};
+function iopub_socket_on_message(ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content){
+	//console.log('message:');
+	//console.log('ident: ',_ident.toString()),
+	//console.log('_delim: ', _delim.toString()),
+	//console.log('hmac: ', _hmac.toString()),
+	//console.log('_header: ', _header.toString());
+	//console.log('_last_header: ', _last_header.toString());
+	//console.log('_gap: ', _gap.toString());
+	//console.log('_content: ', _content.toString());
+				
+	let ident = _ident.toString();
+	if ( _header ) {
+		let header = JSON.parse(_header.toString());
+		let last_header = JSON.parse(_last_header.toString());
+		let content = JSON.parse(_content.toString());
+		let hmac = _hmac.toString();
+		
+		console.log('type: ', header.msg_type);
+		console.log(' content:', content);
+		if ( header.msg_type === 'status' ) {
+			console.log('STATUS:', content.execution_state);
+		} else
+		if ( header.msg_type === 'execute_input' ) {
+			console.log('execution code: ', content.code);
+		} else
+		if ( header.msg_type === 'error' ) {
+			if ( ws ) {
+				ws.send(JSON.stringify({
+					channel: 'iopub',
+					header: header,
+					parent_header: last_header,
+					content: content
+				}));
+				ws.send(JSON.stringify({
+					channel: 'shell',
+					header: header,
+					parent_header: last_header,
+					metadata: {
+						engine: this.id,
+						status: "error"
+					},
+					content: content
+				}));
+			}
+		} else
+		if (( header.msg_type === 'stream' ) ||
+			( header.msg_type === 'execute_result' )) {
+			if ( ws ) {
+				ws.send(JSON.stringify({
+					channel: 'iopub',
+					header: header,
+					parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
+					content: content
+				}));
+			}
+		}
+	}
+}
 
+let kernels = {};
 class Kernel {
 	static kernel(id) {
 		return (kernels[id]);
@@ -147,6 +204,7 @@ class Kernel {
 	}
 	async start_channels(ports) {
 		console.log('start_channels', ports);
+		let iopub_socket = null;
 
 		let shell_socket = await create_connected_socket(ports.shell_port, 'dealer');
 		shell_socket.on('message', (msg) => {
@@ -158,102 +216,16 @@ class Kernel {
 		});
 		console.log('iopub_port', ports.iopub_port);
 		if ( ports.iopub_port ) {
-			let iopub_socket = await create_connected_socket(ports.iopub_port, 'sub');
+			iopub_socket = await create_connected_socket(ports.iopub_port, 'sub');
 			console.log(iopub_socket);
 			iopub_socket.subscribe('');
 			iopub_socket.on('message', (_ident, _delim, _hmac, _header, _last_header, _gap, _content) => {
-				console.log('message:');
-				console.log('ident: ',_ident.toString()),
-				console.log('_delim: ', _delim.toString()),
-				console.log('hmac: ', _hmac.toString()),
-				console.log('_header: ', _header.toString());
-				console.log('_last_header: ', _last_header.toString());
-				console.log('_gap: ', _gap.toString());
-				console.log('_content: ', _content.toString());
-				
-				let ident = _ident.toString();
-				if ( _header ) {
-					let header = JSON.parse(_header.toString());
-					let last_header = JSON.parse(_last_header.toString());
-					let content = JSON.parse(_content.toString());
-					let hmac = _hmac.toString();
-
-					if ( ident === 'stream.stderr') {
-						console.log('STDERR: ', content.text);
-					} else
-					if  ( ident === 'stream.stdout' ) {
-						console.log('STDOUT: ', content.text);
-						console.log('last_header:', last_header.size);
-						if ( this.ws ) {
-							this.ws.send(JSON.stringify({
-								channel: 'iopub',
-								header: header,
-								parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
-								content: content
-							}));
-						}
-					} else
-					if ( ident === 'execute_result' ) {
-						console.log('RESULT: ', content);
-						if ( this.ws ) {
-							this.ws.send(JSON.stringify({
-								channel: 'iopub',
-								header: header,
-								parent_header: last_header,
-								content: content
-							}));
-							this.ws.send(JSON.stringify({
-								channel: 'shell',
-								header: header,
-								parent_header: last_header,
-								content: content
-							}));
-						}
-					} else
-					if ( ident === 'error' ) {
-						if ( this.ws ) {
-							this.ws.send(JSON.stringify({
-								channel: 'iopub',
-								header: header,
-								parent_header: last_header,
-								content: content
-							}));
-							this.ws.send(JSON.stringify({
-								channel: 'shell',
-								header: header,
-								parent_header: last_header,
-								metadata: {
-									engine: this.id,
-									status: "error"
-								},
-								content: content
-							}));
-						}
-
-					} else
-					if  ( ident === 'status' ) {
-						console.log('STATUS:', content.execution_state);
-					} else
-					if ( ident === 'execute_input' ) {
-						console.log('CODE  :', content.code);
-					} else {
-						console.log('iopub:', ident);
-						console.log('  header:', header);
-						console.log('  content:', content);
-						if ( this.ws ) {
-							this.ws.send(JSON.stringify({
-								channel: 'iopub',
-								header: header,
-								parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
-								content: content
-							}));
-						}
-					}
-				}
+				iopub_socket_on_message(this.ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 			});
 		}
 		return ({
 			shell: shell_socket,
+			iopub: iopub_socket,
 			hb: hb_socket
 		});
 	}
@@ -304,9 +276,9 @@ class Kernel {
 			JSON.stringify(content),
 			opts.buffers
 		];
-		console.log('key: ', key);
+		//console.log('key: ', key);
 		let s = hash(key, msg_list.join(''));
-		console.log('hash: ', s);
+		//console.log('hash: ', s);
 		return([
 			'stdin',
 			'<IDS|MSG>',
@@ -338,9 +310,9 @@ class Kernel {
 		return (msg[3].msg_id);
 	}
 	send(name, content) {
-		console.log("socket:", name);
-		console.log(this.sockets);
-		console.log("content: ", content);
+		//console.log("socket:", name);
+		//console.log(this.sockets);
+		//console.log("content: ", content);
 		let socket = this.sockets[name];
 		socket.send(content);
 	}
