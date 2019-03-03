@@ -16,6 +16,16 @@ class Session {
 	static session(id) {
 		return (sessions[id]);
 	}
+	static delete_(id) {
+		let succ = false;
+		let session = sessions[id];
+		if ( session ) {
+			session.kernel.dispose();
+			delete sessions[id];
+			succ = true;
+		}
+		return (succ);
+	}
 	kernel_info() {
 		return ({
 			id: this.kernel.id,

@@ -116,6 +116,23 @@ function patch(req, res, next) {
 	res.json(content.attribute());
 }
 
+function delete_(req, res, next) {
+	console.log("delete");
+	console.log('path: ', req.path);
+	console.log('params: ', req.params);
+
+	if ( req.params.path ) {
+		params_path = req.params.path;
+	} else {
+		params_path = '';
+	}
+	//console.log("path =" + params_path);
+
+	if ( Content.delete_(params_path) ) {
+		res.sendStatus(204);
+	}
+}
+
 module.exports = {
 	get: get,
 	get_checkpoints: get_checkpoints,
@@ -123,4 +140,5 @@ module.exports = {
 	put: put,
 	post: post,
 	patch: patch,
+	delete: delete_,
 };

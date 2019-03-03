@@ -35,6 +35,23 @@ class Content {
 			nbformat_minor: 2
 		}
 	}
+	static delete_(path) {
+		let file_path = make_path(BASE_DIR, path);
+		let stat = Fs.statSync(file_path);
+		let succ = false;
+
+		if (( stat ) &&
+			( stat.mode & 200 )) {
+			if ( stat.isDirectory() ) {
+				Fs.rmdirSync(file_path);
+				succ = true;
+			} else {
+				Fs.unlinkSync(file_path);
+				succ = true;
+			}
+		}
+		return (succ);
+	}
 	static new_file(path) {
 		let dir = make_path(BASE_DIR, path);
 		let name = 'Untitled.ipynb'

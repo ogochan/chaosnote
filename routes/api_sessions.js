@@ -52,10 +52,23 @@ function patch(req, res, next) {
 	res.json(session.info());
 }
 
+function delete_(req, res, next) {
+	console.log("patch");
+	console.log('body: ', req.body);
+	console.log('path: ', req.path);
+	console.log('params: ', req.params);
+
+	session_id = req.params.id;
+	if ( Session.delete_(session_id) ) {
+		res.sendStatus(204);
+	}
+}
+
 
 module.exports = {
 	post: post,
 	get: get,
 	put: put,
 	patch: patch,
+	delete: delete_,
 };

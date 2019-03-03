@@ -15,11 +15,13 @@ router.put('/contents', contents.put);
 router.post('/contents/:path(*)', contents.post);
 router.post('/contents', contents.put);
 router.patch('/contents/:path(*)', contents.patch);
+router.delete('/contents/:path(*)', contents.delete);
 
 router.get('/sessions', sessions.get);
 router.put('/sessions', sessions.put);
 router.post('/sessions', sessions.post);
 router.patch('/sessions/:id(*)', sessions.patch);
+router.delete('/sessions/:id(*)', sessions.delete);
 
 router.ws('/kernels/:id/channels', kernels.channels);
 
