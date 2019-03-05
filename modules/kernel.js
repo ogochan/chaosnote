@@ -196,6 +196,7 @@ class Kernel {
 		this.status = 'stop';
 		this.headers = [];
 		this.connections = 0;
+		this._is_alive = false;
 		
 		kernels[kernel_id] = this;
 	}
@@ -205,15 +206,24 @@ class Kernel {
 	async start_channels(ports) {
 		console.log('start_channels', ports);
 		let iopub_socket = null;
+		let hb_socket = null;
 
 		let shell_socket = await create_connected_socket(ports.shell_port, 'dealer');
 		shell_socket.on('message', (msg) => {
 			console.log('shell:', msg.toString());
 		});
-		let hb_socket = await create_connected_socket(ports.hb_port, 'req');
-		hb_socket.on('message', (msg) => {
-			console.log('hb:', msg.toString());
-		});
+		if ( ports.hb_port ) {
+			hb_socket = await create_connected_socket(ports.hb_port, 'req');
+			hb_socket.on('message', (_msg) => {
+				let msg = _msg.toString();
+				//console.log('pong:', msg);
+				if ( this.ping != msg ) {
+					this._is_alive = false;
+				} else {
+					this._is_alive = true;
+				}
+			});
+		}
 		console.log('iopub_port', ports.iopub_port);
 		if ( ports.iopub_port ) {
 			iopub_socket = await create_connected_socket(ports.iopub_port, 'sub');
@@ -223,32 +233,40 @@ class Kernel {
 				iopub_socket_on_message(this.ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 			});
 		}
+		setInterval(() => {
+			this.send_ping();
+		}, 10000);
 		return ({
 			shell: shell_socket,
 			iopub: iopub_socket,
 			hb: hb_socket
 		});
 	}
+	fork_kernel() {
+		let command = this.command;
+		this.process = spawn(command.command, command.args, command.opt);
+		this.process.stdout.on("data", (data) => {
+			console.log("data: ", data.toString());
+		});
+		console.log(`kernel ${this.id}(${this.name}) started`);
 
+		this._is_alive = true;
+	}
 	async _start(key) {
 		this.key = key;
 		console.log("_start");
 		let ports = await make_config(key, this.connection_file_name);
 		console.log("_start()*");
-		let command = this.command;
 		console.log('this.status:', this.status);
-		console.log(`kernel ${this.id}(${this.name}) started`);
 		let socket_ports = ports;
 		console.log('control_ports = ', socket_ports.control_port);
 		let control_socket = create_connected_socket(socket_ports.control_port, 'dealer');
 		control_socket.on('message', (msg) => {
 			console.log('control: ', msg.toString());
 		});
-		this.process = spawn(command.command, command.args, command.opt);
-		this.process.stdout.on("data", (data) => {
-			console.log("data: ");
-			console.log(data.toString());
-		});
+
+		this.fork_kernel();
+
 		this.sockets = await this.start_channels(socket_ports);
 		this.status = 'idle';
 	}
@@ -284,6 +302,15 @@ class Kernel {
 			'<IDS|MSG>',
 			s].concat(msg_list));
 	}
+	send_ping() {
+		this.ping = new_id();
+		//console.log('ping:', this.ping);
+		this.sockets.hb.send(this.ping);
+	}
+	is_alive() {
+		send_ping();
+		return (this._is_alive);
+	}
 	execute(args, opts) {
 		console.log("execute");
 		if ( typeof opts === "undefined" ) {
@@ -306,6 +333,10 @@ class Kernel {
 //			stop_on_error: stop_on_error
 //		};
 		let msg = Kernel._msg('execute_request', args, opts, this.key);
+		while ( !this.is_alive() ) {
+			console.log(`kernel is down ${this.id}(${this.name}) restarting`);
+			fork_kernel();
+		}
 		this.send("shell", msg);
 		return (msg[3].msg_id);
 	}
