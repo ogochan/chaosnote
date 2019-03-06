@@ -214,15 +214,6 @@ class Kernel {
 		});
 		if ( ports.hb_port ) {
 			hb_socket = await create_connected_socket(ports.hb_port, 'req');
-			hb_socket.on('message', (_msg) => {
-				let msg = _msg.toString();
-				//console.log('pong:', msg);
-				if ( this.ping != msg ) {
-					this._is_alive = false;
-				} else {
-					this._is_alive = true;
-				}
-			});
 		}
 		console.log('iopub_port', ports.iopub_port);
 		if ( ports.iopub_port ) {
@@ -254,10 +245,7 @@ class Kernel {
 	}
 	async _start(key) {
 		this.key = key;
-		console.log("_start");
 		let ports = await make_config(key, this.connection_file_name);
-		console.log("_start()*");
-		console.log('this.status:', this.status);
 		let socket_ports = ports;
 		console.log('control_ports = ', socket_ports.control_port);
 		let control_socket = create_connected_socket(socket_ports.control_port, 'dealer');
@@ -304,11 +292,33 @@ class Kernel {
 	}
 	send_ping() {
 		this.ping = new_id();
-		//console.log('ping:', this.ping);
+		console.log('ping:', this.ping);
 		this.sockets.hb.send(this.ping);
+		return new Promise((resolve, reject) => {
+			const hb_recv = (_msg) => {
+				let msg = _msg.toString();
+				console.log('pong:', msg);
+				this.pong = msg;
+				if ( this.ping != this.pong ) {
+					this._is_alive = false;
+				} else {
+					this._is_alive = true;
+				}
+				resolve();
+				clean_up();
+			};
+			const clean_up = () => {
+				this.sockets.hb.removeListener('message', hb_recv);
+			};
+			this.sockets.hb.on('message', hb_recv);
+			setTimeout(() => {
+				reject();
+				clean_up();
+			}, 10000);
+		});
 	}
-	is_alive() {
-		send_ping();
+	async is_alive() {
+		await this.send_ping();
 		return (this._is_alive);
 	}
 	execute(args, opts) {
