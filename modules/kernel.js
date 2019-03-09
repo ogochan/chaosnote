@@ -201,7 +201,51 @@ class Kernel {
 		kernels[kernel_id] = this;
 	}
 	dispose() {
+		clearInterval(this.hb);
+		this.process.kill('SIGKILL');
 		delete kernels[this.kernel_id];
+	}
+	send_ping() {
+		this.ping = new_id();
+		console.log('ping:', this.ping);
+		this.sockets.hb.send(this.ping);
+		return new Promise((resolve) => {
+			this.hb_timeout = null;
+			const hb_recv = (_msg) => {
+				let msg = _msg.toString();
+				console.log('pong:', msg);
+				this.pong = msg;
+				if ( this.ping != this.pong ) {
+					this._is_alive = false;
+				} else {
+					this._is_alive = true;
+				}
+				resolve();
+				clean_up();
+			};
+			const clean_up = () => {
+				this.sockets.hb.removeListener('message', hb_recv);
+				if ( this.hb_timeout ) {
+					clearTimeout(this.hb_timeout);
+					this.hb_timeout = null;
+				}
+			};
+			this.sockets.hb.on('message', hb_recv);
+			this.hb_timeout = setTimeout(() => {
+				console.log("timeout");
+				clean_up();
+				this._is_alive = false;
+				resolve();
+			}, 5000);
+		});
+	}
+	async check_kernel() {
+		await this.send_ping();
+		console.log("is_alive = ", this._is_alive);
+		while ( !this._is_alive ) {
+			console.log(`kernel is down ${this.id}(${this.name}) restarting`);
+			this.fork_kernel();
+		}
 	}
 	async start_channels(ports) {
 		console.log('start_channels', ports);
@@ -224,8 +268,8 @@ class Kernel {
 				iopub_socket_on_message(this.ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 			});
 		}
-		setInterval(() => {
-			this.send_ping();
+		this.hb = setInterval(() => {
+			this.check_kernel();
 		}, 10000);
 		return ({
 			shell: shell_socket,
@@ -240,7 +284,6 @@ class Kernel {
 			console.log("data: ", data.toString());
 		});
 		console.log(`kernel ${this.id}(${this.name}) started`);
-
 		this._is_alive = true;
 	}
 	async _start(key) {
@@ -290,37 +333,6 @@ class Kernel {
 			'<IDS|MSG>',
 			s].concat(msg_list));
 	}
-	send_ping() {
-		this.ping = new_id();
-		console.log('ping:', this.ping);
-		this.sockets.hb.send(this.ping);
-		return new Promise((resolve, reject) => {
-			const hb_recv = (_msg) => {
-				let msg = _msg.toString();
-				console.log('pong:', msg);
-				this.pong = msg;
-				if ( this.ping != this.pong ) {
-					this._is_alive = false;
-				} else {
-					this._is_alive = true;
-				}
-				resolve();
-				clean_up();
-			};
-			const clean_up = () => {
-				this.sockets.hb.removeListener('message', hb_recv);
-			};
-			this.sockets.hb.on('message', hb_recv);
-			setTimeout(() => {
-				reject();
-				clean_up();
-			}, 10000);
-		});
-	}
-	async is_alive() {
-		await this.send_ping();
-		return (this._is_alive);
-	}
 	execute(args, opts) {
 		console.log("execute");
 		if ( typeof opts === "undefined" ) {
@@ -341,13 +353,12 @@ class Kernel {
 //			user_expressions: user_expressions,
 //			allow_stdin: allow_stdin,
 //			stop_on_error: stop_on_error
-//		};
+		//		};
+
 		let msg = Kernel._msg('execute_request', args, opts, this.key);
-		while ( !this.is_alive() ) {
-			console.log(`kernel is down ${this.id}(${this.name}) restarting`);
-			fork_kernel();
-		}
 		this.send("shell", msg);
+		console.log(msg);
+
 		return (msg[3].msg_id);
 	}
 	send(name, content) {
