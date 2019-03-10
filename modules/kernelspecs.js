@@ -8,7 +8,24 @@ function make_resourcefilename(dir, body) {
 	return (`/kernelspecs/${dir}/${body}`);
 }
 
-kernelspecs =  {};
+kernelspecs =  {
+	'Python3': {
+		name: 'Python3',
+		resources: {},
+		spec: {
+			"argv": [
+				"python3",
+				"-m",
+				"ipykernel",
+				"-f",
+				"{connection_file}"
+			],
+			"display_name": "Python3",
+			"language": "python"
+		}
+	}
+};
+		
 
 fs.readdirSync(global.env.kernels_dir).forEach((dir) => {
 	kernelspecs[dir] = {

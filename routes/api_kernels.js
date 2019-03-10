@@ -7,6 +7,7 @@ function channels(ws, req) {
 		message = JSON.parse(_message);
 		kernel = Kernel.kernel(req.params.id);
 		//console.log('kernel: ', kernel);
+		console.log("session:", req.session);
 		console.log('header: ', message.header);
 		if ( kernel ) {
 			console.log('msg_type: ', message.header.msg_type);

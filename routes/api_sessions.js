@@ -26,6 +26,7 @@ function post(req, res, next)	{
 	kernel_name = req.body.kernel.name;
 
 	session = new Session(path, "notebook", "", kernel_name);
+	req.session.sessions[session.id] = session.id;
 	console.log(session);
 	session.kernel.start(session.id);
 
@@ -35,7 +36,7 @@ function post(req, res, next)	{
 function get(req, res, next)	{
 	console.log("get");
 	
-	res.json(Session.info_all());
+	res.json(Session.info_all(req.session));
 }
 
 function patch(req, res, next) {
@@ -60,6 +61,7 @@ function delete_(req, res, next) {
 
 	session_id = req.params.id;
 	if ( Session.delete_(session_id) ) {
+		delete req.session.sessions[session_id];
 		res.sendStatus(204);
 	}
 }

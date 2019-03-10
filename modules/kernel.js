@@ -164,7 +164,9 @@ function iopub_socket_on_message(ws, _ident, _delim, _hmac, _header, _last_heade
 			}
 		} else
 		if (( header.msg_type === 'stream' ) ||
-			( header.msg_type === 'execute_result' )) {
+//			( header.msg_type === 'execute_input' ) ||
+			( header.msg_type === 'execute_result' ) ||
+			( header.msg_type === 'display_data' )) {
 			if ( ws ) {
 				ws.send(JSON.stringify({
 					channel: 'iopub',

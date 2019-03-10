@@ -2,6 +2,8 @@ var createError = require('http-errors');
 const express = require('express');
 const app = express();
 const expressWS = require('express-ws')(app);
+const session = require('express-session');
+const passport = require('passport');
 
 global.env = require('./config/config');
 
@@ -27,8 +29,21 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(session({
+	secret: 'chaosnote',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		httpOnly: true,
+		secure: false,
+		maxage: 1000 * 60 * 30
+	}
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/kernelspecs', express.static(global.env.kernels_dir));
 

@@ -10,7 +10,6 @@ class Session {
 		this.name = name;
 		this.type = type;
 		this.kernel = new Kernel(kernel_name);
-
 		sessions[this.id] = this;
 	}
 	static session(id) {
@@ -18,7 +17,7 @@ class Session {
 	}
 	static delete_(id) {
 		let succ = false;
-		let session = sessions[id];
+		let session = session.sessions[id];
 		if ( session ) {
 			session.kernel.dispose();
 			delete sessions[id];
@@ -47,9 +46,10 @@ class Session {
 				name: ""
 			}});
 	}
-	static info_all() {
+	static info_all(session) {
 		let infos = [];
-		Object.keys(sessions).forEach((key) => {
+		Object.keys(session.sessions).forEach((key) => {
+			console.log('key: ', key);
 			infos.push(sessions[key].info());
 		});
 		return (infos);

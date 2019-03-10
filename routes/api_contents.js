@@ -73,7 +73,7 @@ function get(req, res, next) {
 
 
 function put(req, res, next) {
-	console.log('body: ', req.body);
+	//console.log('body: ', req.body);
 	body = req.body;
 
 	content = new Content(req.params.path);
