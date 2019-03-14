@@ -14,6 +14,43 @@ $ npm install
 
 I tested on Ruby kernel and Javascript(node) kernel. They can run.
 
-Ruby と node のkernelについてのみテストしています。他は動くかどうかわかりません。
+* Ruby, node, IPython のkernelについてのみテストしています。他は動くかどうかわかりません。
 
-一応ノートを作成してコードを走らせて保存することは出来ますが、細かい機能については追い追い...
+* IPython kernel が動くため、Pythonコードが動くだけではなく、マジックコマンドも使えるようになりました。
+
+  例えば、
+
+```
+import iplantuml
+
+%%plantuml
+
+@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+@enduml
+```
+
+	といったコードが実行出来るようになります。
+
+* 一応ノートを作成してコードを走らせて保存することは出来ますが、細かい機能については追い追い...
+
+* 認証を組み込み中なので、サーバ起動後はloginをしないと正しく動きません。
+
+  ただし、実際に認証はしていないので、ユーザ名パスワードは何を入れても通ります
+
+# TODO
+
+* 雑多なコマンドや機能が正しく動くか確認して行く
+
+* /view/ の実装
+
+* 認証をマトモにして行く
+
+* サーバを再起動してもlogoutしないようにする
+
+* クライアントのJavascriptを整理する
+
+# 将来
+
+* ドキュメントの共有を実装する
