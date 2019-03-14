@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 const passport = require('passport');
 const Local = require('passport-local').Strategy;
 
@@ -13,7 +12,6 @@ passport.use(new Local(
 		process.nextTick(() => {
 			let result = true;
 			if ( result ) {
-				req.session.sessions = {};
 				return done(null, {
 					user_name: user_name
 				});
@@ -32,21 +30,20 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-	console.log('deserialize:', user);
 	return done(null, user);
 });
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+function get(req, res, next) {
 	res.render('login', { title: 'Login',
 						  version_hash: '0.0',
 						  contents_js_source: '',
 						  nbjs_translations: '',
 						  path: req.params.name,
 						});
-});
+}
 
-router.post('/', function(req, res, next) {
+function login(req, res, next) {
 	console.log(req.body.user_name);
 	console.log(req.body.password);
 
@@ -62,12 +59,23 @@ router.post('/', function(req, res, next) {
 			if (error) {
 				return next(error);
 			} else {
+				req.session.sessions = {};
 				console.log('user found');
 				res.redirect('/tree');
 			}
 		});
 	})(req, res, next);
-});
+}
 
+function logout(req, res, next) {
+	console.log('logout', req.user);
+	req.logout();
+	req.session = null;
+	res.redirect('/login');
+}
 
-module.exports = router;
+module.exports = {
+	get: get,
+	login: login,
+	logout: logout
+};

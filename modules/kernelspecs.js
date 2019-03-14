@@ -20,7 +20,7 @@ kernelspecs =  {
 				"-f",
 				"{connection_file}"
 			],
-			"display_name": "Python3",
+			"display_name": "Python 3",
 			"language": "python"
 		}
 	}

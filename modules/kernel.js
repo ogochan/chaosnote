@@ -137,44 +137,43 @@ function iopub_socket_on_message(ws, _ident, _delim, _hmac, _header, _last_heade
 		
 		console.log('type: ', header.msg_type);
 		console.log(' content:', content);
-		if ( header.msg_type === 'status' ) {
-			console.log('STATUS:', content.execution_state);
-		} else
-		if ( header.msg_type === 'execute_input' ) {
-			console.log('execution code: ', content.code);
-		} else
-		if ( header.msg_type === 'error' ) {
-			if ( ws ) {
-				ws.send(JSON.stringify({
-					channel: 'iopub',
-					header: header,
-					parent_header: last_header,
-					content: content
-				}));
-				ws.send(JSON.stringify({
-					channel: 'shell',
-					header: header,
-					parent_header: last_header,
-					metadata: {
-						engine: this.id,
-						status: "error"
-					},
-					content: content
-				}));
-			}
-		} else
-		if (( header.msg_type === 'stream' ) ||
-//			( header.msg_type === 'execute_input' ) ||
-			( header.msg_type === 'execute_result' ) ||
-			( header.msg_type === 'display_data' )) {
-			if ( ws ) {
-				ws.send(JSON.stringify({
-					channel: 'iopub',
-					header: header,
-					parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
-					content: content
-				}));
-			}
+		if ( ws ) {
+			ws.send(JSON.stringify({
+				channel: 'iopub',
+				header: header,
+				parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
+				content: content
+			}));
+		}
+	}
+}
+
+function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_header, _gap, _content){
+	//console.log('message:');
+	//console.log('ident: ',_ident.toString()),
+	//console.log('_delim: ', _delim.toString()),
+	//console.log('hmac: ', _hmac.toString()),
+	//console.log('_header: ', _header.toString());
+	//console.log('_last_header: ', _last_header.toString());
+	//console.log('_gap: ', _gap.toString());
+	//console.log('_content: ', _content.toString());
+				
+	let ident = _ident.toString();
+	if ( _header ) {
+		let header = JSON.parse(_header.toString());
+		let last_header = JSON.parse(_last_header.toString());
+		let content = JSON.parse(_content.toString());
+		let hmac = _hmac.toString();
+		
+		console.log('type: ', header.msg_type);
+		console.log(' content:', content);
+		if ( ws ) {
+			ws.send(JSON.stringify({
+				channel: channel,
+				header: header,
+				parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
+				content: content
+			}));
 		}
 	}
 }
@@ -255,8 +254,8 @@ class Kernel {
 		let hb_socket = null;
 
 		let shell_socket = await create_connected_socket(ports.shell_port, 'dealer');
-		shell_socket.on('message', (msg) => {
-			console.log('shell:', msg.toString());
+		shell_socket.on('message', (_ident, _delim, _hmac, _header, _last_header, _gap, _content) => {
+			socket_on_message(this.ws, 'shell', _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 		});
 		if ( ports.hb_port ) {
 			hb_socket = await create_connected_socket(ports.hb_port, 'req');
@@ -267,7 +266,7 @@ class Kernel {
 			console.log(iopub_socket);
 			iopub_socket.subscribe('');
 			iopub_socket.on('message', (_ident, _delim, _hmac, _header, _last_header, _gap, _content) => {
-				iopub_socket_on_message(this.ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content);
+				socket_on_message(this.ws, 'iopub', _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 			});
 		}
 		this.hb = setInterval(() => {
@@ -301,6 +300,7 @@ class Kernel {
 		this.fork_kernel();
 
 		this.sockets = await this.start_channels(socket_ports);
+		send_ping();
 		this.status = 'idle';
 	}
 	start(key) {
@@ -335,7 +335,7 @@ class Kernel {
 			'<IDS|MSG>',
 			s].concat(msg_list));
 	}
-	execute(args, opts) {
+	execute(msg_type, channel, args, opts) {
 		console.log("execute");
 		if ( typeof opts === "undefined" ) {
 			opts = {
@@ -357,8 +357,8 @@ class Kernel {
 //			stop_on_error: stop_on_error
 		//		};
 
-		let msg = Kernel._msg('execute_request', args, opts, this.key);
-		this.send("shell", msg);
+		let msg = Kernel._msg(msg_type, args, opts, this.key);
+		this.send(channel, msg);
 		console.log(msg);
 
 		return (msg[3].msg_id);

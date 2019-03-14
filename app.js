@@ -4,6 +4,7 @@ const app = express();
 const expressWS = require('express-ws')(app);
 const session = require('express-session');
 const passport = require('passport');
+const router = express.Router();
 
 global.env = require('./config/config');
 
@@ -16,7 +17,6 @@ global.kernelspecs = require('./modules/kernelspecs');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var loginRouter = require('./routes/login');
 var treeRouter = require('./routes/tree');
 var apiRouter = require('./routes/api');
 var notebooksRouter = require('./routes/notebooks');
@@ -51,7 +51,6 @@ app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/login', loginRouter);
 app.use('/tree', treeRouter);
 app.use('/notebooks', notebooksRouter);
 

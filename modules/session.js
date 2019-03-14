@@ -17,7 +17,7 @@ class Session {
 	}
 	static delete_(id) {
 		let succ = false;
-		let session = session.sessions[id];
+		let session = sessions[id];
 		if ( session ) {
 			session.kernel.dispose();
 			delete sessions[id];

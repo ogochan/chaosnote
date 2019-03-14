@@ -11,16 +11,14 @@ function channels(ws, req) {
 		console.log('header: ', message.header);
 		if ( kernel ) {
 			console.log('msg_type: ', message.header.msg_type);
-			if ( message.header.msg_type === 'execute_request' ) {
-				kernel.execute(message.content, {
+			kernel.execute(message.header.msg_type, message.channel, message.content, {
 					parent_header: message.parent_header,
 					header: message.header,
 					parent_header: message.parent_header,
 					metadata: message.metadata,
 					buffers: message.buffers
-				});
-				kernel.ws = ws;
-			}
+			});
+			kernel.ws = ws;
 		}
 	});
 
