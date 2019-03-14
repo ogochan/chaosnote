@@ -18,7 +18,8 @@ I tested on Ruby kernel and Javascript(node) kernel. They can run.
 
 * IPython kernel が動くため、Pythonコードが動くだけではなく、マジックコマンドも使えるようになりました。
 
-  例えば、
+  例えば、以下のコードが実行出来るようになります(iplantumlは自分で入れておいてね)。
+
 
 ```
 import iplantuml
@@ -30,8 +31,6 @@ Alice -> Bob: Authentication Request
 Bob --> Alice: Authentication Response
 @enduml
 ```
-
-	といったコードが実行出来るようになります。
 
 * 一応ノートを作成してコードを走らせて保存することは出来ますが、細かい機能については追い追い...
 
