@@ -14,13 +14,13 @@ function make_path(dir, file){
 }
 
 function get_checkpoints(req, res, next) {
-	console.log("checkpoints");
+	//console.log("checkpoints");
 	if ( req.params.path ) {
 		params_path = req.params.path;
 	} else {
 		params_path = '';
 	}
-	console.log("path =" + params_path);
+	//console.log("path =" + params_path);
 
 	content = new Content(params_path);
 
@@ -31,9 +31,9 @@ function get_checkpoints(req, res, next) {
 }
 
 function post_checkpoints(req, res, next) {
-	console.log("post_checkpoints");
-	console.log('path: ', req.path);
-	console.log('params: ', req.params);
+	//console.log("post_checkpoints");
+	//console.log('path: ', req.path);
+	//console.log('params: ', req.params);
 
 	content = new Content(req.params.path);
 	content.load(true);
@@ -55,10 +55,10 @@ function get(req, res, next) {
 
 	base = new Content(params_path);
 
-	console.log('query.content:', req.query.content);
+	//console.log('query.content:', req.query.content);
 	if (( typeof req.query.content === 'undefined' ) ||
 		( req.query.content !== '0' )) {
-		console.log('get content');
+		//console.log('get content');
 		base.load(false);
 	} else {
 		base.load(false);
@@ -82,10 +82,10 @@ function put(req, res, next) {
 }
 
 function post(req, res, next) {
-	console.log("post");
-	console.log('body: ', req.body);
-	console.log('path: ', req.path);
-	console.log('params: ', req.params);
+	//console.log("post");
+	//console.log('body: ', req.body);
+	//console.log('path: ', req.path);
+	//console.log('params: ', req.params);
 	if ( req.params.path ) {
 		params_path = req.params.path;
 	} else {
@@ -101,10 +101,10 @@ function post(req, res, next) {
 }
 
 function patch(req, res, next) {
-	console.log("patch");
-	console.log('body: ', req.body);
-	console.log('path: ', req.path);
-	console.log('params: ', req.params);
+	//console.log("patch");
+	//console.log('body: ', req.body);
+	//console.log('path: ', req.path);
+	//console.log('params: ', req.params);
 
 	to_path = req.body.path;
 	orig_path = req.params.path;
@@ -115,9 +115,9 @@ function patch(req, res, next) {
 }
 
 function delete_(req, res, next) {
-	console.log("delete");
-	console.log('path: ', req.path);
-	console.log('params: ', req.params);
+	//console.log("delete");
+	//console.log('path: ', req.path);
+	//console.log('params: ', req.params);
 
 	if ( req.params.path ) {
 		params_path = req.params.path;

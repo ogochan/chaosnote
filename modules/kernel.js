@@ -38,7 +38,7 @@ function hash(key, string) {
 }
 
 async function alloc_port(base) {
-	console.log("alloc_port");
+	//console.log("alloc_port");
 	let port = null;
 
 	if ( base > 0 ) {
@@ -46,7 +46,7 @@ async function alloc_port(base) {
 	} else {
 		port = await aport({host: global.env.host});
 	}
-	console.log(port);
+	//console.log(port);
 	return(port);
 }
 
@@ -57,7 +57,7 @@ function make_command_line(kernel_name, this_env) {
 	let command = argv[0];
 	let args = [];
 	argv.slice(1).forEach((arg) => {
-		console.log(arg);
+		//console.log(arg);
 		if ( match = arg.match(/\{.*\}/) ) {
 			if ( match[0] == '{connection_file}' ) {
 				args.push(this_env.connection_file);
@@ -92,7 +92,7 @@ async function make_ports() {
 }
 
 function create_connected_socket(port, type, identity = null) {
-	console.log('create_connected_socket port = ', port);
+	//console.log('create_connected_socket port = ', port);
 	let socket = zmq.socket(type);
 	socket.connect(`tcp://${global.env.host}:${port}`);
 	socket.linger = 1000;
@@ -103,7 +103,7 @@ function create_connected_socket(port, type, identity = null) {
 }
 
 async function  make_config(key, connection_file_name) {
-	console.log("make_config");
+	//console.log("make_config");
 	let ports = await make_ports();
 
 	let config = ports;
@@ -113,7 +113,7 @@ async function  make_config(key, connection_file_name) {
 	config.signature_scheme = 'hmac-sha256';
 	config.key = key;
 
-	console.log('config:', config);
+	//console.log('config:', config);
 	fs.writeFileSync(connection_file_name, JSON.stringify(config));
 	return (ports);
 }
@@ -135,8 +135,8 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 		let content = JSON.parse(_content.toString());
 		let hmac = _hmac.toString();
 		
-		console.log('type: ', header.msg_type);
-		console.log(' content:', content);
+		//console.log('type: ', header.msg_type);
+		//console.log(' content:', content);
 		if ( ws ) {
 			ws.send(JSON.stringify({
 				channel: channel,
@@ -178,13 +178,13 @@ class Kernel {
 	}
 	send_ping() {
 		this.ping = new_id();
-		console.log('ping:', this.ping);
+		//console.log('ping:', this.ping);
 		this.sockets.hb.send(this.ping);
 		return new Promise((resolve) => {
 			this.hb_timeout = null;
 			const hb_recv = (_msg) => {
 				let msg = _msg.toString();
-				console.log('pong:', msg);
+				//console.log('pong:', msg);
 				this.pong = msg;
 				if ( this.ping != this.pong ) {
 					this._is_alive = false;
@@ -212,14 +212,14 @@ class Kernel {
 	}
 	async check_kernel() {
 		await this.send_ping();
-		console.log("is_alive = ", this._is_alive);
+		//console.log("is_alive = ", this._is_alive);
 		while ( !this._is_alive ) {
 			console.log(`kernel is down ${this.id}(${this.name}) restarting`);
 			this.fork_kernel();
 		}
 	}
 	async start_channels(ports) {
-		console.log('start_channels', ports);
+		//console.log('start_channels', ports);
 		let iopub_socket = null;
 		let hb_socket = null;
 
@@ -230,10 +230,9 @@ class Kernel {
 		if ( ports.hb_port ) {
 			hb_socket = await create_connected_socket(ports.hb_port, 'req');
 		}
-		console.log('iopub_port', ports.iopub_port);
+		//console.log('iopub_port', ports.iopub_port);
 		if ( ports.iopub_port ) {
 			iopub_socket = await create_connected_socket(ports.iopub_port, 'sub');
-			console.log(iopub_socket);
 			iopub_socket.subscribe('');
 			iopub_socket.on('message', (_ident, _delim, _hmac, _header, _last_header, _gap, _content) => {
 				socket_on_message(this.ws, 'iopub', _ident, _delim, _hmac, _header, _last_header, _gap, _content);
@@ -261,7 +260,6 @@ class Kernel {
 		this.key = key;
 		let ports = await make_config(key, this.connection_file_name);
 		let socket_ports = ports;
-		console.log('control_ports = ', socket_ports.control_port);
 		let control_socket = create_connected_socket(socket_ports.control_port, 'dealer');
 		control_socket.on('message', (msg) => {
 			console.log('control: ', msg.toString());
@@ -274,7 +272,7 @@ class Kernel {
 		this.status = 'idle';
 	}
 	start(key) {
-		console.log('this.status:', this.status);
+		//console.log('this.status:', this.status);
 		if ( this.status === 'stop' ) {
 			return this._start(key);
 		}
@@ -306,7 +304,7 @@ class Kernel {
 			s].concat(msg_list));
 	}
 	execute(msg_type, channel, args, opts) {
-		console.log("execute");
+		//console.log("execute");
 		if ( typeof opts === "undefined" ) {
 			opts = {
 				parent_header: {},
@@ -329,7 +327,7 @@ class Kernel {
 
 		let msg = Kernel._msg(msg_type, args, opts, this.key);
 		this.send(channel, msg);
-		console.log(msg);
+		//console.log(msg);
 
 		return (msg[3].msg_id);
 	}

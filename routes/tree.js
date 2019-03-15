@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const treeFunc = function(req, res, next) {
-	console.log(req.params.name);
+	//console.log(req.params.name);
 	res.render('tree', { title: 'Tree',
 						 path: req.params.name,
 						 version_hash: '0.0',

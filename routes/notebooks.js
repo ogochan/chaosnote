@@ -3,7 +3,7 @@ var router = express.Router();
 const path = require('path');
 
 const notebookFunc = function(req, res, next) {
-	console.log(req.params.name);
+	//console.log(req.params.name);
 	res.render('notebooks', { title: 'Notebooks',
 							  name: path.basename(req.params.name),
 							  path: req.params.name,

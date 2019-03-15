@@ -68,7 +68,7 @@ router.get('/terminals', function(req, res, next) {
 });
 
 router.get('/kernelspecs', function(req, res, next) {
-	console.log(global.kernelspecs);
+	//console.log(global.kernelspecs);
 	res.json({
 		default: "ruby",
 		kernelspecs: global.kernelspecs

@@ -42,7 +42,7 @@ Bob --> Alice: Authentication Response
 
 * 雑多なコマンドや機能が正しく動くか確認して行く
 
-* /view/ の実装
+* /view/ の実装 -> done!
 
 * 認証をマトモにして行く
 

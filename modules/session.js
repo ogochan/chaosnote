@@ -49,7 +49,7 @@ class Session {
 	static info_all(session) {
 		let infos = [];
 		Object.keys(session.sessions).forEach((key) => {
-			console.log('key: ', key);
+			//console.log('key: ', key);
 			infos.push(sessions[key].info());
 		});
 		return (infos);

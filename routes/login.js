@@ -16,7 +16,7 @@ passport.use(new Local(
 					user_name: user_name
 				});
 			} else {
-				console.log('login error');
+				//console.log('login error');
 				return done(null, false, {
 					message: 'fail'
 				});
@@ -25,7 +25,7 @@ passport.use(new Local(
 	}));
 
 passport.serializeUser((user, done) => {
-	console.log('serialize:', user);
+	//console.log('serialize:', user);
 	return done(null, user.user_name);
 });
 
@@ -44,8 +44,8 @@ function get(req, res, next) {
 }
 
 function login(req, res, next) {
-	console.log(req.body.user_name);
-	console.log(req.body.password);
+	//console.log(req.body.user_name);
+	//console.log(req.body.password);
 
 	passport.authenticate('local', (error, user, info) => {
 		if (error) {
@@ -68,7 +68,7 @@ function login(req, res, next) {
 }
 
 function logout(req, res, next) {
-	console.log('logout', req.user);
+	//console.log('logout', req.user);
 	req.logout();
 	req.session = null;
 	res.redirect('/login');
