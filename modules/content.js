@@ -1,5 +1,7 @@
 const Fs = require('fs');
 const Path = require('path');
+const Mime = require('mime');
+
 const BASE_DIR = global.env.data_dir;
 
 function make_path(dir, file){
@@ -75,11 +77,12 @@ class Content {
 		let content;
 		let type;
 		let mime_type;
-		
+
+		//console.log('stat:', this.stat);
+		//console.log('path:', this.file_path);
 		if ( this.stat.isFile() ) {
 			let checkpoint_dir;
 			let path;
-		
 			if (( typeof checkpoint === 'undefined' ) ||
 				( !checkpoint )) {
 				path = this.file_path;
@@ -87,16 +90,27 @@ class Content {
 				checkpoint_dir = `${Path.dirname(this.file_path)}/.ipynb_checkpoints`;
 				path = `${checkpoint_dir}/${Path.basename(this.file_path, '.ipynb')}-checkpoint.ipynb`;
 			}
-			content = JSON.parse(Fs.readFileSync(path, 'utf8'));
-			content.cells.forEach((cell) => {
-				cell.source = cell.source.join('');
-			});
 			this.stat = Fs.statSync(path);
-			this.size = this.stat.size,
-			this.type = "notebook";
-			this.format = "json";
+			this.size = this.stat.size;
+			if ( this.file_path.match(/\.ipynb$/) ) {
+				this.type = "notebook";
+				this.format = "json";
+				content = JSON.parse(Fs.readFileSync(path, 'utf8'));
+				content.cells.forEach((cell) => {
+					cell.source = cell.source.join('');
+				});
+			} else {
+				if ( this.file_path.match(/.txt$/) ) {
+					this.type = 'file';
+					mime_type = 'text/plain';
+				} else {
+					this.type = 'file';
+					this.mime_type = Mime.getType(this.file_path);
+				}
+				content = Fs.readFileSync(this.file_path);
+			}
 		} else {
-			base.type = "directory";
+			this.type = "directory";
 			content = [];
 			Fs.readdirSync(this.file_path).forEach((file) => {
 				if ( file.match(/^\./) ) {
@@ -113,8 +127,8 @@ class Content {
 							type = 'file';
 							mime_type = 'text/plain';
 						} else {
-							type = '';
-							mime_type = null;
+							type = "file";
+							mime_type = Mime.getType(real_path);
 						}
 						content.push({
 							name: file,

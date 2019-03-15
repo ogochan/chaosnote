@@ -2,8 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const Content = require('../modules/content');
 
-const BASE_DIR = "/home/ogochan/jupyter"
-
 function make_path(dir, file){
     if ( dir == '/' ) {
         return ( '/' + file);

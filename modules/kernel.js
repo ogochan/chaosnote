@@ -118,38 +118,8 @@ async function  make_config(key, connection_file_name) {
 	return (ports);
 }
 
-function iopub_socket_on_message(ws, _ident, _delim, _hmac, _header, _last_header, _gap, _content){
-	//console.log('message:');
-	//console.log('ident: ',_ident.toString()),
-	//console.log('_delim: ', _delim.toString()),
-	//console.log('hmac: ', _hmac.toString()),
-	//console.log('_header: ', _header.toString());
-	//console.log('_last_header: ', _last_header.toString());
-	//console.log('_gap: ', _gap.toString());
-	//console.log('_content: ', _content.toString());
-				
-	let ident = _ident.toString();
-	if ( _header ) {
-		let header = JSON.parse(_header.toString());
-		let last_header = JSON.parse(_last_header.toString());
-		let content = JSON.parse(_content.toString());
-		let hmac = _hmac.toString();
-		
-		console.log('type: ', header.msg_type);
-		console.log(' content:', content);
-		if ( ws ) {
-			ws.send(JSON.stringify({
-				channel: 'iopub',
-				header: header,
-				parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
-				content: content
-			}));
-		}
-	}
-}
-
 function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_header, _gap, _content){
-	//console.log('message:');
+	//console.log('channel:', channel);
 	//console.log('ident: ',_ident.toString()),
 	//console.log('_delim: ', _delim.toString()),
 	//console.log('hmac: ', _hmac.toString()),

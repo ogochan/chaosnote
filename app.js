@@ -16,12 +16,12 @@ global.kernelspecs = require('./modules/kernelspecs');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+const filesRouter = require('./routes/files');
+const viewRouter = require('./routes/view');
 var treeRouter = require('./routes/tree');
 var apiRouter = require('./routes/api');
 var notebooksRouter = require('./routes/notebooks');
 var nbextensionsRouter = require('./routes/nbextensions');
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -48,11 +48,14 @@ app.use(passport.session());
 app.use('/kernelspecs', express.static(global.env.kernels_dir));
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
+//app.use('/files', express.static(global.env.data_dir));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tree', treeRouter);
 app.use('/notebooks', notebooksRouter);
+app.use('/files', filesRouter);
+app.use('/view', viewRouter);
 
 app.use('/api', apiRouter);
 
