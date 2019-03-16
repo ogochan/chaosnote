@@ -14,14 +14,14 @@ var logger = require('morgan');
 
 global.kernelspecs = require('./modules/kernelspecs');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 const filesRouter = require('./routes/files');
 const viewRouter = require('./routes/view');
-var treeRouter = require('./routes/tree');
-var apiRouter = require('./routes/api');
-var notebooksRouter = require('./routes/notebooks');
-var nbextensionsRouter = require('./routes/nbextensions');
+const treeRouter = require('./routes/tree');
+const apiRouter = require('./routes/api');
+const notebooksRouter = require('./routes/notebooks');
+const nbextensionsRouter = require('./routes/nbextensions');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

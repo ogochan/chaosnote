@@ -153,23 +153,25 @@ class Kernel {
 	static kernel(id) {
 		return (kernels[id]);
 	}
-	constructor(kernel_name) {
-		let kernel_id = new_id();
+	constructor(kernel_name, id) {
+		this.kernel_name = kernel_name;
+		let kernel_id = ( typeof id === 'undefined' ) ? new_id() : id;
 		let connection_file_name = global.env.connection_dir + `/kernel-${kernel_id}.json`;
-
-		this.name = kernel_name;
 
 		this.id = kernel_id;
 		this.connection_file_name = connection_file_name;
 		this.command = make_command_line(kernel_name, {
 			home: global.env.home,
 			connection_file: connection_file_name});
-		this.status = 'stop';
-		this.headers = [];
-		this.connections = 0;
-		this._is_alive = false;
-		
 		kernels[kernel_id] = this;
+		this.status = 'stop';
+		this._is_alive = false;
+		this.ws = null;
+		//console.log(this);
+	}
+	restart() {
+		this.process.kill('SIGKILL');
+		// kernel restart automaticaly by check_kernel()
 	}
 	dispose() {
 		clearInterval(this.hb);
@@ -268,7 +270,7 @@ class Kernel {
 		this.fork_kernel();
 
 		this.sockets = await this.start_channels(socket_ports);
-		send_ping();
+		this.send_ping();
 		this.status = 'idle';
 	}
 	start(key) {
@@ -304,7 +306,6 @@ class Kernel {
 			s].concat(msg_list));
 	}
 	execute(msg_type, channel, args, opts) {
-		//console.log("execute");
 		if ( typeof opts === "undefined" ) {
 			opts = {
 				parent_header: {},
@@ -327,7 +328,6 @@ class Kernel {
 
 		let msg = Kernel._msg(msg_type, args, opts, this.key);
 		this.send(channel, msg);
-		//console.log(msg);
 
 		return (msg[3].msg_id);
 	}
