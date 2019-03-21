@@ -8,16 +8,6 @@ function put(req, res, next)	{
 	//console.log(req.body);
 }
 
-//Kernel.kernel(kernel.id).start();
-
-//let kernel = new Kernel('ruby');
-//kernel.start().then(() => {
-//	res = kernel.execute({
-//		code: '10.times { p "!" }'
-//	});
-//	console.log('res:', res);
-//});
-					
 function post(req, res, next)	{
 	//console.log("post");
 	//console.log(req.body);

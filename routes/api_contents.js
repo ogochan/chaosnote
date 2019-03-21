@@ -131,10 +131,14 @@ function delete_(req, res, next) {
 	}
 }
 
+function post_trust(req, res, next) {
+}
+
 module.exports = {
 	get: get,
 	get_checkpoints: get_checkpoints,
 	post_checkpoints: post_checkpoints,
+	post_trust: post_trust,
 	put: put,
 	post: post,
 	patch: patch,

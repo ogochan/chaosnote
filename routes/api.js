@@ -13,9 +13,10 @@ router.get('/contents', contents.get);
 router.put('/contents/:path(*)', contents.put);
 router.put('/contents', contents.put);
 router.post('/contents/:path(*)', contents.post);
+router.post('/contents/:path(*)/trust', contents.post_trust);
 router.post('/contents', contents.put);
 router.patch('/contents/:path(*)', contents.patch);
-router.delete('/contents/:path(*)', contents.delete);
+router.patch('/contents/:path(*)', contents.patch);
 
 router.get('/sessions', sessions.get);
 router.put('/sessions', sessions.put);
