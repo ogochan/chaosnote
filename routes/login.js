@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const Local = require('passport-local').Strategy;
+const Session = require('../modules/session');
 
 passport.use(new Local(
 	{
@@ -59,7 +60,6 @@ function login(req, res, next) {
 			if (error) {
 				return next(error);
 			} else {
-				req.session.sessions = {};
 				console.log('user found');
 				res.redirect('/tree');
 			}

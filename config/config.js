@@ -9,4 +9,7 @@ module.exports =  {
 	control_port: 0,
 	iopub_port: 0,
 	heartbeat_port: 0,
+	session_ttl: 3600 * 24 * 7,
+	session_path: './sessions',
+	save_env_path: './saveenv.json'
 };

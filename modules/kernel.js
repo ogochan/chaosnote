@@ -52,6 +52,7 @@ async function alloc_port(base) {
 
 
 function make_command_line(kernel_name, this_env) {
+	console.log('make_command_line:', kernel_name);
 	let kernel = global.kernelspecs[kernel_name].spec;
 	let argv = kernel.argv;
 	let command = argv[0];
@@ -149,13 +150,31 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 }
 
 let kernels = {};
+
 class Kernel {
+	static load(defs) {
+		kernels = {};
+		Object.keys(defs).forEach((key) => {
+			//console.log('kernel:', defs[key]);
+			//new Kernel(defs[key].kernel_name, defs[key].id); // kernel isn't needed for restore session
+		});
+	}
 	static kernel(id) {
 		return (kernels[id]);
 	}
+	static save() {
+		let save_kernels = {};
+
+		Object.keys(kernels).forEach((key) => {
+			save_kernels[key] = {};
+			save_kernels[key].id = kernels[key].id;
+			save_kernels[key].kernel_name = kernels[key].kernel_name;
+		});
+		return (save_kernels);
+	}
 	constructor(kernel_name, id) {
-		this.kernel_name = kernel_name;
 		let kernel_id = ( typeof id === 'undefined' ) ? new_id() : id;
+		this.kernel_name = kernel_name;
 		let connection_file_name = global.env.connection_dir + `/kernel-${kernel_id}.json`;
 
 		this.id = kernel_id;
@@ -174,8 +193,11 @@ class Kernel {
 		// kernel restart automaticaly by check_kernel()
 	}
 	dispose() {
-		clearInterval(this.hb);
-		this.process.kill('SIGKILL');
+		try {
+			clearInterval(this.hb);
+			this.process.kill('SIGKILL');
+		}
+		catch {};
 		delete kernels[this.kernel_id];
 	}
 	send_ping() {
@@ -255,7 +277,7 @@ class Kernel {
 		this.process.stdout.on("data", (data) => {
 			console.log("data: ", data.toString());
 		});
-		console.log(`kernel ${this.id}(${this.name}) started`);
+		console.log(`kernel ${this.id}(${this.kernel_name}) started`);
 		this._is_alive = true;
 	}
 	async _start(key) {
@@ -297,7 +319,8 @@ class Kernel {
 			JSON.stringify(content),
 			opts.buffers
 		];
-		//console.log('key: ', key);
+		console.log('key: ', key);
+		console.log('msg:', msg_list);
 		let s = hash(key, msg_list.join(''));
 		//console.log('hash: ', s);
 		return([

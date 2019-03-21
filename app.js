@@ -1,10 +1,12 @@
-var createError = require('http-errors');
+const createError = require('http-errors');
 const express = require('express');
 const app = express();
 const expressWS = require('express-ws')(app);
 const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 const passport = require('passport');
 const router = express.Router();
+const Session = require('./modules/session');
 
 global.env = require('./config/config');
 
@@ -36,10 +38,15 @@ app.use(session({
 	secret: 'chaosnote',
 	resave: false,
 	saveUninitialized: false,
+	store: new FileStore({
+		ttl: global.env.session_ttl,	//	default 3600(s)
+		reapInterbal: global.env.session_ttl,
+		path: global.env.session_path	//	default path
+	}),
 	cookie: {
 		httpOnly: true,
 		secure: false,
-		maxage: 1000 * 60 * 30
+		maxage: null
 	}
 }));
 app.use(passport.initialize());
@@ -79,5 +86,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+Session.init();
 
 module.exports = app;
