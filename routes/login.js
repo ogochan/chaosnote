@@ -3,6 +3,10 @@ const passport = require('passport');
 const Local = require('passport-local').Strategy;
 const Session = require('../modules/session');
 
+function auth_user(user, pass) {
+	return (true);
+}
+
 passport.use(new Local(
 	{
 		usernameField: 'user_name',
@@ -10,14 +14,18 @@ passport.use(new Local(
 		passReqToCallback: true,
 		session: true,
 	}, (req, user_name, password, done) => {
+		console.log('user_name', user_name);
+		console.log('password', password);
+		console.log('done', done);
+
 		process.nextTick(() => {
-			let result = true;
+			let result = auth_user(user_name, password);
 			if ( result ) {
 				return done(null, {
 					user_name: user_name
 				});
 			} else {
-				//console.log('login error');
+				console.log('login error');
 				return done(null, false, {
 					message: 'fail'
 				});
@@ -31,6 +39,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
+	//console.log('deserialize:', user);
 	return done(null, user);
 });
 
@@ -49,28 +58,31 @@ function login(req, res, next) {
 	//console.log(req.body.password);
 
 	passport.authenticate('local', (error, user, info) => {
+		console.log('error', error);
+		console.log('user', user);
+		console.log('info', info);
 		if (error) {
 			return next(error);
 		}
 		if ( !user ) {
 			console.log('user not found');
 			res.redirect('/login');
+		} else {
+			req.login(user, (error, user) => {
+				if (error) {
+					return next(error);
+				} else {
+					console.log('user found', user);
+					res.redirect('/tree');
+				}
+			});
 		}
-		req.login(user, (error, user) => {
-			if (error) {
-				return next(error);
-			} else {
-				console.log('user found');
-				res.redirect('/tree');
-			}
-		});
 	})(req, res, next);
 }
 
 function logout(req, res, next) {
-	//console.log('logout', req.user);
+	console.log('logout', req.user);
 	req.logout();
-	req.session = null;
 	res.redirect('/login');
 }
 

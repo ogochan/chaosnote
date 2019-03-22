@@ -40,7 +40,7 @@ app.use(session({
 	saveUninitialized: false,
 	store: new FileStore({
 		ttl: global.env.session_ttl,	//	default 3600(s)
-		reapInterbal: global.env.session_ttl,
+		reapInterval: global.env.session_ttl,
 		path: global.env.session_path	//	default path
 	}),
 	cookie: {

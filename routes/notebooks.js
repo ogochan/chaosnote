@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const path = require('path');
+const isAuthenticated = require('../modules/auth_check.js');
 
 const notebookFunc = function(req, res, next) {
 	//console.log(req.params.name);
@@ -12,7 +13,7 @@ const notebookFunc = function(req, res, next) {
 };
 
 /* GET users listing. */
-router.get('/', notebookFunc);
-router.get('/:name(*)', notebookFunc);
+router.get('/', isAuthenticated, notebookFunc);
+router.get('/:name(*)', isAuthenticated, notebookFunc);
 
 module.exports = router;

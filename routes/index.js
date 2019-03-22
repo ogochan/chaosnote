@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const login = require('../routes/login');
+const isAuthenticated = require('../modules/auth_check.js');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', isAuthenticated, function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
