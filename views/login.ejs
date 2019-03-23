@@ -120,30 +120,31 @@
 	</div>
 	<div id="site">
 	  <div id="ipython-main-app" class="container">
-		<div class="row">
-		  <div class="navbar col-sm-8">
-			<div class="navbar-inner">
-			  <div class="container">
-				<div class="center-nav">
-				  <form action="/login?next=%2F" method="post" class="navbar-form pull-left">
-					<input type="hidden" name="_xsrf" value="2|e695a7c6|e80a4bb55ee81d58da75b0ff551bbd3e|1524186396"/>
-					<div>
-					  <label for="user_input"><strong>Username:</strong></label>
-					  <input type="text" name="user_name" id="user_input" class="form-control">
-					</div>
-					<div>
-					  <label for="password_input"><strong>Password:</strong></label>
-					  <input type="password" name="password" id="password_input" class="form-control">
-					</div>
-					<div>
-					  <button type="submit" class="btn btn-default" id="login_submit">Log in</button>
-					</div>
-				  </form>
-				</div>
-			  </div>
+		<form action="/login?next=%2F" method="post">
+		  <div class="form-group row">
+			<input type="hidden" name="_xsrf" value="2|e695a7c6|e80a4bb55ee81d58da75b0ff551bbd3e|1524186396"/>
+			<label for="user_input" class="col-sm-2 col-form-label"><strong>Username:</strong></label>
+			<div class="col-sm-10">
+			  <input type="text" name="user_name" id="user_input" class="form-control">
 			</div>
 		  </div>
-		</div>
+		  <div class="form-group row">
+			<label for="password_input" class="col-sm-2 col-form-label"><strong>Password:</strong></label>
+			<div class="col-sm-10">
+			  <input type="password" name="password" id="password_input" class="form-control">
+			</div>
+		  </div>
+		  <div class="form-group row">
+			<div class="col-sm-2">
+			  <button type="submit" class="btn btn-default" id="login_submit">Log in</button>
+			</div>
+			<div class="col-sm-8">
+			</div>
+			<div class="col-sm-2">
+			  <a href="/signup" class="btn btn-default">Sign Up</a>
+			</div>
+		  </div>
+		</form>
 	  </div>
 	</div>
 	<script type="text/javascript">

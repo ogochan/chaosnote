@@ -7,6 +7,7 @@ const FileStore = require('session-file-store')(session);
 const passport = require('passport');
 const router = express.Router();
 const Session = require('./modules/session');
+const User = require('./modules/user').User;
 
 global.env = require('./config/config');
 
@@ -81,6 +82,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+User.init();
 Session.init();
 
 module.exports = app;

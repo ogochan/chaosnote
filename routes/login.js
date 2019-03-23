@@ -2,7 +2,9 @@ const express = require('express');
 const passport = require('passport');
 const Local = require('passport-local').Strategy;
 const Session = require('../modules/session');
-const auth_user = require('../modules/user').auth_user;
+const _user = require('../modules/user');
+const auth_user = _user.auth_user;
+const User = _user.User;
 
 passport.use(new Local(
 	{
@@ -93,6 +95,20 @@ function signup_get(req, res, next) {
 }
 
 function signup_post(req, res, next) {
+	console.log(req.body.user_name);
+	console.log(req.body.password);
+
+	user_name = req.body.user_name;
+	password = req.body.password;
+	if ( !User.check(user_name) ) {
+		user = new User(user_name, {})
+		user.password = password;
+		User.save();
+		res.redirect('/login');
+	} else {
+		console.log('user duplicate', user_name);
+		res.redirect('/signup');
+	}
 }
 
 module.exports = {
