@@ -4,20 +4,22 @@ var router = express.Router();
 const contents = require('./api_contents');
 const sessions = require('./api_sessions');
 const kernels = require('./api_kernels');
-const isAuthenticated = require('../modules/auth_check.js');
+const is_authenticated = require('../modules/user.js').is_authenticated;
 
-router.get('/contents/:path(*)/checkpoints', isAuthenticated, contents.get_checkpoints);
-router.post('/contents/:path(*)/checkpoints', isAuthenticated, contents.post_checkpoints);
+router.get('/contents/:path(*)/checkpoints', is_authenticated, contents.get_checkpoints);
+router.post('/contents/:path(*)/checkpoints', is_authenticated, contents.post_checkpoints);
 
 router.get('/contents/:path(*)', contents.get);
 router.get('/contents', contents.get);
 router.put('/contents/:path(*)', contents.put);
 router.put('/contents', contents.put);
+router.post('/contents', contents.post);
 router.post('/contents/:path(*)', contents.post);
 router.post('/contents/:path(*)/trust', contents.post_trust);
 router.post('/contents', contents.put);
+
 router.patch('/contents/:path(*)', contents.patch);
-router.patch('/contents/:path(*)', contents.patch);
+router.delete('/contents/:path(*)', contents.delete);
 
 router.get('/sessions', sessions.get);
 router.put('/sessions', sessions.put);

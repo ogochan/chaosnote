@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const isAuthenticated = require('../modules/auth_check.js');
+const is_authenticated = require('../modules/user.js').is_authenticated;
 
 const treeFunc = function(req, res, next) {
 	//console.log(req.params.name);
@@ -13,7 +13,7 @@ const treeFunc = function(req, res, next) {
 };
 
 /* GET users listing. */
-router.get('/', isAuthenticated, treeFunc);
-router.get('/:name(*)', isAuthenticated, treeFunc);
+router.get('/', is_authenticated, treeFunc);
+router.get('/:name(*)', is_authenticated, treeFunc);
 
 module.exports = router;

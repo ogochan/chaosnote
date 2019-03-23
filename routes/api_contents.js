@@ -1,5 +1,4 @@
-const fs = require('fs');
-const path = require('path');
+const Fs = require('fs');
 const Content = require('../modules/content');
 
 function make_path(dir, file){
@@ -82,22 +81,50 @@ function put(req, res, next) {
 }
 
 function post(req, res, next) {
-	//console.log("post");
-	//console.log('body: ', req.body);
-	//console.log('path: ', req.path);
-	//console.log('params: ', req.params);
+	console.log("post");
+	console.log('body: ', req.body);
+	console.log('path: ', req.path);
+	console.log('params: ', req.params);
+
 	if ( req.params.path ) {
 		params_path = req.params.path;
 	} else {
 		params_path = '';
 	}
+	if ( req.body.type === 'notebook' ) {
+		name = Content.new_note(params_path);
+		path = make_path(params_path, name)
+		content = new Content(path);
 
-	fn = Content.new_file(params_path);
-	content = new Content(fn);
-	stat = content.save(false);
-	res.json({
-		path: content.path
-	});
+		stat = content.save(false);
+		stat.content = null,
+		stat.format = null,
+		stat.mimetype = null,
+		stat.name = name,
+		stat.type = 'notebook';
+	} else
+	if ( req.body.type === 'directory' ) {
+		name = Content.new_folder(params_path);
+		path = make_path(params_path, name);
+		stat = Content.stat(path);
+		stat.format = null;
+		stat.mimetype = null;
+		stat.name = name,
+		stat.size = null;
+		stat.type = 'directory';
+	} else
+	if ( req.body.type === 'file' ) {
+		name = Content.new_file(params_path, req.body.ext);
+		path = make_path(params_path, name);
+		stat = Content.stat(path);
+		stat.format = null;
+		stat.mimetype = null;
+		stat.name = name,
+		stat.size = null;
+		stat.type = 'directory';
+	}
+
+	res.json(stat);
 }
 
 function patch(req, res, next) {

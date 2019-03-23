@@ -54,7 +54,7 @@ class Content {
 		}
 		return (succ);
 	}
-	static new_file(path) {
+	static new_note(path) {
 		let dir = make_path(BASE_DIR, path);
 		let name = 'Untitled.ipynb'
 		let fn = make_path(dir, name);
@@ -71,7 +71,47 @@ class Content {
 			nbformat_minor: 2
 		}));
 
-		return (make_path(path, name));
+		return (name);
+	}
+	static new_folder(path) {
+		let dir = make_path(BASE_DIR, path);
+		let name = 'Untitled Folder'
+		let fn = make_path(dir, name);
+		let count = 2;
+		while ( Fs.existsSync(fn) ) {
+			name = `Untitled Folder${count}`;
+			fn = make_path(dir, name);
+			count ++;
+		}
+		Fs.mkdirSync(fn, 0o755);
+
+		return (name);
+	}
+	static new_file(path, ext) {
+		let dir = make_path(BASE_DIR, path);
+		let name = `Untitled${((ext) && ( ext != '' )) ? '.' + ext : ''}`
+		let fn = make_path(dir, name);
+		let count = 2;
+		while ( Fs.existsSync(fn) ) {
+			name = `Untitled Folder${count}${((ext) && ( ext != '' )) ? '.' + ext : ''}`;
+			fn = make_path(dir, name);
+			count ++;
+		}
+		Fs.mkdirSync(fn, 0o755);
+
+		return (name);
+	}
+	static stat(path)  {
+		let fn = make_path(BASE_DIR, path);
+		let _stat = Fs.statSync(fn);
+		return ({
+			content: null,
+			created: _stat.created,
+			last_modified: _stat.mtime,
+			path: path,
+			size: null,
+			writable: ( _stat.mode & 0o200 ) ? true: false,
+		});
 	}
 	load(checkpoint) {
 		let content;
@@ -199,13 +239,19 @@ class Content {
 
 		Fs.writeFileSync(path, content_str);
 		let stat = Fs.statSync(path);
-		this.stat = Fs.statSync(path);
-		this.size = this.stat.size;
+
+		this.stat = stat;
+		this.size = stat.size;
 		this.last_modified = stat.mtime;
+		this.writable = ( stat.mode & 0o200 ) ? true: false;
 
 		return ({
+			content: null,
+			created: stat.created,
+			last_modified: stat.mtime,
+			path: this.path,
 			size: stat.size,
-			mtime: stat.msize
+			writable: ( stat.mode & 0o200 ) ? true: false,
 		});
 	}
 	rename(new_path) {

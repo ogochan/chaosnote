@@ -2,10 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const Local = require('passport-local').Strategy;
 const Session = require('../modules/session');
-
-function auth_user(user, pass) {
-	return (true);
-}
+const auth_user = require('../modules/user').auth_user;
 
 passport.use(new Local(
 	{
@@ -86,7 +83,21 @@ function logout(req, res, next) {
 	res.redirect('/login');
 }
 
+function signup_get(req, res, next) {
+	res.render('signup', { title: 'Signup',
+						  version_hash: '0.0',
+						  contents_js_source: '',
+						  nbjs_translations: '',
+						  path: req.params.name,
+						});
+}
+
+function signup_post(req, res, next) {
+}
+
 module.exports = {
+	signup_get: signup_get,
+	signup_post: signup_post,
 	get: get,
 	login: login,
 	logout: logout
