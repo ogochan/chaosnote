@@ -2,6 +2,8 @@ const Fs = require('fs');
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 10;
 
+let users;
+
 function is_authenticated(req, res, next) {
 	console.log(req.session);
 
@@ -20,7 +22,6 @@ function auth_user(name, password) {
 	return (false);
 }
 
-let users;
 class User {
 	constructor (name, user_info) {
 		if ( !user_info ) {
@@ -39,7 +40,8 @@ class User {
 		try {
 			let users_str = Fs.readFileSync(global.env.password_path);
 			let env_load = JSON.parse(users_str);
-			env_load.forEach((user_info) => {
+		    Object.keys(env_load).forEach((name) => {
+				let user_info = env_load[name];
 				console.log('user_info:', user_info);
 				let user = new User(user_info.name,user_info);
 			});

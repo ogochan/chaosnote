@@ -19,6 +19,7 @@ passport.use(new Local(
 
 		process.nextTick(() => {
 			let result = auth_user(user_name, password);
+			console.log("result:", result);
 			if ( result ) {
 				return done(null, {
 					user_name: user_name
@@ -49,6 +50,8 @@ function get(req, res, next) {
 						  contents_js_source: '',
 						  nbjs_translations: '',
 						  path: req.params.name,
+						  msg_type: '',
+						  message: '',
 						});
 }
 
@@ -65,11 +68,20 @@ function login(req, res, next) {
 		}
 		if ( !user ) {
 			console.log('user not found');
-			res.redirect('/login');
+			res.render('login', { title: 'Signup',
+								  version_hash: '0.0',
+								  msg_type: 'danger',
+								  message: `user ${user.user_name} not found`
+								});
 		} else {
 			req.login(user, (error, user) => {
 				if (error) {
-					return next(error);
+					//return next(error);
+					res.render('login', { title: 'Signup',
+										  version_hash: '0.0',
+										  msg_type: 'danger',
+										  message: `user ${user.user_name} not found`
+										});
 				} else {
 					console.log('user found', user);
 					res.redirect('/tree');
@@ -89,8 +101,9 @@ function signup_get(req, res, next) {
 	res.render('signup', { title: 'Signup',
 						  version_hash: '0.0',
 						  contents_js_source: '',
-						  nbjs_translations: '',
-						  path: req.params.name,
+						   nbjs_translations: '',
+						   msg_type: '',
+						   message: ''
 						});
 }
 
@@ -109,7 +122,11 @@ function signup_post(req, res, next) {
 		res.redirect('/login');
 	} else {
 		console.log('user duplicate', user_name);
-		res.redirect('/signup');
+		res.render('signup', { title: 'Signup',
+							   version_hash: '0.0',
+							   msg_type: 'danger',
+							   message: `user ${user_name} duplicated`
+							 });
 	}
 }
 
