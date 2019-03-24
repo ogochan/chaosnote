@@ -39,10 +39,9 @@ class User {
 		try {
 			let users_str = Fs.readFileSync(global.env.password_path);
 			let env_load = JSON.parse(users_str);
-			Object.keys(env_load).forEach((name) => {
-				let user_info = env_load[name];
+			env_load.forEach((user_info) => {
 				console.log('user_info:', user_info);
-				let user = new User(name,user_info);
+				let user = new User(user_info.name,user_info);
 			});
 		}
 		catch {

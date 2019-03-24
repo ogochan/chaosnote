@@ -211,15 +211,18 @@ class Content {
 	save(checkpoint) {
 		let checkpoint_dir;
 		let path;
+		let stat;
 		
 		if (( typeof checkpoint === 'undefined' ) ||
 			( !checkpoint )) {
 			path = this.file_path;
 		} else {
 			checkpoint_dir = `${Path.dirname(this.file_path)}/.ipynb_checkpoints`;
-			let stat = Fs.statSync(checkpoint_dir);
-			if ( !stat ) {
-				Fs.mkdir(checkpoint_dir);
+			try {
+				stat = Fs.statSync(checkpoint_dir);
+			}
+			catch {
+				Fs.mkdirSync(checkpoint_dir);
 			}
 			path = `${checkpoint_dir}/${Path.basename(this.file_path, '.ipynb')}-checkpoint.ipynb`;
 		}
@@ -238,7 +241,7 @@ class Content {
 		let content_str = JSON.stringify(this.content, null, " ");
 
 		Fs.writeFileSync(path, content_str);
-		let stat = Fs.statSync(path);
+		stat = Fs.statSync(path);
 
 		this.stat = stat;
 		this.size = stat.size;

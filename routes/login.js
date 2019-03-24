@@ -101,7 +101,9 @@ function signup_post(req, res, next) {
 	user_name = req.body.user_name;
 	password = req.body.password;
 	if ( !User.check(user_name) ) {
-		user = new User(user_name, {})
+		user = new User(user_name, {
+			name: user_name
+		})
 		user.password = password;
 		User.save();
 		res.redirect('/login');
