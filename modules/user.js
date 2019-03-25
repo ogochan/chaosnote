@@ -34,6 +34,16 @@ class User {
 		});
 		users[name] = this;
 	}
+	static current(req) {
+		let user;
+		if (( req.session ) &&
+			( req.session.passport )) {
+			user = req.session.passport.user;
+		} else {
+			user = null;
+		}
+		return (user);
+	}
 	static init() {
 		users = {};
 		console.log('load users');
@@ -52,11 +62,11 @@ class User {
 	static save() {
 		let users_str = JSON.stringify(users);
 		console.log(users_str);
-		//try {
+		try {
 			Fs.writeFileSync(global.env.password_path, users_str);
-		//}
-		//catch {
-		//}
+		}
+		catch {
+		}
 	}
 	set password(p) {
 		this.hash_password = bcrypt.hashSync(p, SALT_ROUNDS);

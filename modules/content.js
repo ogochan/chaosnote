@@ -16,11 +16,13 @@ function make_path(dir, file){
 }
 
 class Content {
-	constructor(path) {
-		let file_path = make_path(BASE_DIR, path);
+	constructor(user, path) {
+		let dir = make_path(BASE_DIR, user);
+		let file_path = make_path(dir, path);
 		let stat = Fs.statSync(file_path);
 
 		this.file_path = file_path;
+		this.user = user;
 		this.stat = stat;
 		this.name = Path.basename(path);
 		this.path = path;
@@ -37,8 +39,9 @@ class Content {
 			nbformat_minor: 2
 		}
 	}
-	static delete_(path) {
-		let file_path = make_path(BASE_DIR, path);
+	static delete_(user, path) {
+		let dir = make_path(BASE_DIR, user);
+		let file_path = make_path(dir, path);
 		let stat = Fs.statSync(file_path);
 		let succ = false;
 
@@ -54,14 +57,15 @@ class Content {
 		}
 		return (succ);
 	}
-	static new_note(path) {
-		let dir = make_path(BASE_DIR, path);
+	static new_note(user, path) {
+		let dir = make_path(BASE_DIR, user);
+		let dir_path = make_path(dir, path);
 		let name = 'Untitled.ipynb'
-		let fn = make_path(dir, name);
+		let fn = make_path(dir_path, name);
 		let count = 2;
 		while ( Fs.existsSync(fn) ) {
 			name = `Untitled${count}.ipynb`;
-			fn = make_path(dir, name);
+			fn = make_path(dir_path, name);
 			count ++;
 		}
 		Fs.writeFileSync(fn, JSON.stringify({
@@ -73,36 +77,41 @@ class Content {
 
 		return (name);
 	}
-	static new_folder(path) {
-		let dir = make_path(BASE_DIR, path);
+	static new_folder(user, path) {
+		let dir = make_path(BASE_DIR, user);
+		let dir_path = make_path(dir, path);
+
 		let name = 'Untitled Folder'
-		let fn = make_path(dir, name);
+		let fn = make_path(dir_path, name);
 		let count = 2;
 		while ( Fs.existsSync(fn) ) {
 			name = `Untitled Folder${count}`;
-			fn = make_path(dir, name);
+			fn = make_path(dir_path, name);
 			count ++;
 		}
 		Fs.mkdirSync(fn, 0o755);
 
 		return (name);
 	}
-	static new_file(path, ext) {
-		let dir = make_path(BASE_DIR, path);
+	static new_file(user, path, ext) {
+		let dir = make_path(BASE_DIR, user);
+		let dir_path = make_path(dir, path);
+
 		let name = `Untitled${((ext) && ( ext != '' )) ? '.' + ext : ''}`
-		let fn = make_path(dir, name);
+		let fn = make_path(dir_path, name);
 		let count = 2;
 		while ( Fs.existsSync(fn) ) {
 			name = `Untitled Folder${count}${((ext) && ( ext != '' )) ? '.' + ext : ''}`;
-			fn = make_path(dir, name);
+			fn = make_path(dir_path, name);
 			count ++;
 		}
 		Fs.mkdirSync(fn, 0o755);
 
 		return (name);
 	}
-	static stat(path)  {
-		let fn = make_path(BASE_DIR, path);
+	static stat(user, path)  {
+		let dir = make_path(BASE_DIR, user);
+		let fn = make_path(dir, path);
 		let _stat = Fs.statSync(fn);
 		return ({
 			content: null,
@@ -258,7 +267,8 @@ class Content {
 		});
 	}
 	rename(new_path) {
-		let new_file_path = make_path(BASE_DIR, new_path);
+		let dir = make_path(BASE_DIR, this.user);
+		let new_file_path = make_path(dir, new_path);
 		
 		Fs.renameSync(this.file_path, new_file_path);
 		this.file_path = new_file_path;

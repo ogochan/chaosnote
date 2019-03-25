@@ -2,9 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const Local = require('passport-local').Strategy;
 const Session = require('../modules/session');
-const _user = require('../modules/user');
-const auth_user = _user.auth_user;
-const User = _user.User;
+const {auth_user, User} = require('../modules/user');
 
 passport.use(new Local(
 	{
@@ -68,22 +66,22 @@ function login(req, res, next) {
 		}
 		if ( !user ) {
 			console.log('user not found');
-			res.render('login', { title: 'Signup',
+			res.render('login', { title: 'Login',
 								  version_hash: '0.0',
 								  msg_type: 'danger',
 								  message: `user ${user.user_name} not found`
 								});
 		} else {
-			req.login(user, (error, user) => {
+			req.login(user, (error, next) => {
+				console.log(error);
 				if (error) {
-					//return next(error);
-					res.render('login', { title: 'Signup',
+					console.log("error");
+					res.render('login', { title: 'Login',
 										  version_hash: '0.0',
 										  msg_type: 'danger',
 										  message: `user ${user.user_name} not found`
 										});
 				} else {
-					console.log('user found', user);
 					res.redirect('/tree');
 				}
 			});

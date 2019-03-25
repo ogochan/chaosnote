@@ -2,6 +2,7 @@ const new_id = require('../modules/id');
 const Session = require('../modules/session');
 const Kernel = require('../modules/kernel');
 const Content = require('../modules/content');
+const {User} = require('../modules/user');
 
 function put(req, res, next)	{
 	//console.log("put");
@@ -23,7 +24,7 @@ function post(req, res, next)	{
 		kernel_name = req.body.kernel.name;
 	} else {
 		try {
-			base = new Content(path).load(true);
+			base = new Content(User.current(req), path).load(true);
 			kernel_name = base.metadata.kernelspec.name;
 		}
 		catch {

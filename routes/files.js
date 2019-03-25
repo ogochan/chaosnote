@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Path = require('path');
 const Content = require('../modules/content');
+const {User} = require('../modules/user');
 
 const filesFunc = function(req, res, next) {
 	if ( req.params.name ) {
@@ -9,7 +10,7 @@ const filesFunc = function(req, res, next) {
 	} else {
 		params_path = '';
 	}
-	content = new Content(params_path);
+	content = new Content(User.current(req), params_path);
 	content.load(false);
 	
 	//console.log(content.mime_type);

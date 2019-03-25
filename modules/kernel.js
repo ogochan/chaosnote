@@ -138,14 +138,16 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 		
 		//console.log('type: ', header.msg_type);
 		//console.log(' content:', content);
-		if ( ws ) {
+		try {
 			ws.send(JSON.stringify({
 				channel: channel,
 				header: header,
-				parent_header: ( last_header.msg_id ) ? last_header : this.last_header,
+				parent_header: last_header,
 				content: content
 			}));
-		}
+		} catch {
+			console.log('closed websocket kernel');
+		};
 	}
 }
 

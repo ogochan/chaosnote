@@ -1,5 +1,6 @@
 const Fs = require('fs');
 const Content = require('../modules/content');
+const {User} = require('../modules/user');
 
 function make_path(dir, file){
     if ( dir == '/' ) {
@@ -21,7 +22,7 @@ function get_checkpoints(req, res, next) {
 	}
 	//console.log("path =" + params_path);
 
-	content = new Content(params_path);
+	content = new Content(User.current(req), params_path);
 
 	res.json([{
 		id: "checkpoint",
@@ -34,7 +35,7 @@ function post_checkpoints(req, res, next) {
 	//console.log('path: ', req.path);
 	//console.log('params: ', req.params);
 
-	content = new Content(req.params.path);
+	content = new Content(User.current(req), req.params.path);
 	content.load(true);
 	content.save(false);
 
@@ -52,7 +53,7 @@ function get(req, res, next) {
 	}
 	//console.log("path =" + params_path);
 
-	base = new Content(params_path);
+	base = new Content(User.current(req), params_path);
 
 	//console.log('query.content:', req.query.content);
 	if (( typeof req.query.content === 'undefined' ) ||
@@ -74,7 +75,7 @@ function put(req, res, next) {
 	console.log('pub', req.params.path);
 	body = req.body;
 
-	content = new Content(req.params.path);
+	content = new Content(User.current(req), req.params.path);
 	content.set_body(body.content);
 	content.save(true);
 
@@ -93,9 +94,9 @@ function post(req, res, next) {
 		params_path = '';
 	}
 	if ( req.body.type === 'notebook' ) {
-		name = Content.new_note(params_path);
+		name = Content.new_note(User.current(req), params_path);
 		path = make_path(params_path, name)
-		content = new Content(path);
+		content = new Content(User.current(req), path);
 
 		stat = content.save(false);
 		stat.content = null,
@@ -105,9 +106,9 @@ function post(req, res, next) {
 		stat.type = 'notebook';
 	} else
 	if ( req.body.type === 'directory' ) {
-		name = Content.new_folder(params_path);
+		name = Content.new_folder(User.current(req), params_path);
 		path = make_path(params_path, name);
-		stat = Content.stat(path);
+		stat = Content.stat(User.current(req), path);
 		stat.format = null;
 		stat.mimetype = null;
 		stat.name = name,
@@ -115,9 +116,9 @@ function post(req, res, next) {
 		stat.type = 'directory';
 	} else
 	if ( req.body.type === 'file' ) {
-		name = Content.new_file(params_path, req.body.ext);
+		name = Content.new_file(User.current(req), params_path, req.body.ext);
 		path = make_path(params_path, name);
-		stat = Content.stat(path);
+		stat = Content.stat(User.current(req), path);
 		stat.format = null;
 		stat.mimetype = null;
 		stat.name = name,
@@ -136,7 +137,7 @@ function patch(req, res, next) {
 
 	to_path = req.body.path;
 	orig_path = req.params.path;
-	content = new Content(orig_path);
+	content = new Content(User.current(req), orig_path);
 	content.rename(to_path);
 
 	res.json(content.attribute());
@@ -154,7 +155,7 @@ function delete_(req, res, next) {
 	}
 	//console.log("path =" + params_path);
 
-	if ( Content.delete_(params_path) ) {
+	if ( Content.delete_(User.current(req), params_path) ) {
 		res.sendStatus(204);
 	}
 }
