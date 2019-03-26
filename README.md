@@ -68,6 +68,8 @@ Bob --> Alice: Authentication Response
 
 * サーバを再起動してもlogoutしないようにする
 
+* ipywidgetを動かす
+
 ## TODO
 
 * 雑多なコマンドや機能が正しく動くか確認して行く
@@ -82,8 +84,6 @@ Bob --> Alice: Authentication Response
   ドキュメントの共有を実装する
 
 * クライアントのJavascriptを整理する
-
-* ipywidgetを動かす
 
 ## 将来
 

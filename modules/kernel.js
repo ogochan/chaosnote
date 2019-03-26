@@ -119,7 +119,7 @@ async function  make_config(key, connection_file_name) {
 	return (ports);
 }
 
-function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_header, _gap, _content){
+function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_header, _meta, _content){
 	//console.log('channel:', channel);
 	//console.log('ident: ',_ident.toString()),
 	//console.log('_delim: ', _delim.toString()),
@@ -134,6 +134,7 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 		let header = JSON.parse(_header.toString());
 		let last_header = JSON.parse(_last_header.toString());
 		let content = JSON.parse(_content.toString());
+		let meta = JSON.parse(_meta.toString());
 		let hmac = _hmac.toString();
 		
 		//console.log('type: ', header.msg_type);
@@ -143,6 +144,7 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 				channel: channel,
 				header: header,
 				parent_header: last_header,
+				metadata: meta,
 				content: content
 			}));
 		} catch {

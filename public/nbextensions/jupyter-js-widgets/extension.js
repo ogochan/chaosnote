@@ -2069,7 +2069,7 @@ function isnan (val) {
       case 1: return function(value) {
         return func.call(context, value);
       };
-      // The 2-argument case is omitted because weâ€™re not using it.
+      // The 2-argument case is omitted because we’re not using it.
       case 3: return function(value, index, collection) {
         return func.call(context, value, index, collection);
       };
@@ -2085,7 +2085,7 @@ function isnan (val) {
   var builtinIteratee;
 
   // An internal function to generate callbacks that can be applied to each
-  // element in a collection, returning the desired result â€” either `identity`,
+  // element in a collection, returning the desired result — either `identity`,
   // an arbitrary callback, a property matcher, or a property accessor.
   var cb = function(value, context, argCount) {
     if (_.iteratee !== builtinIteratee) return _.iteratee(value, context);
@@ -2104,9 +2104,9 @@ function isnan (val) {
 
   // Some functions take a variable number of arguments, or a few expected
   // arguments at the beginning and then a variable number of values to operate
-  // on. This helper accumulates all remaining arguments past the functionâ€™s
+  // on. This helper accumulates all remaining arguments past the function’s
   // argument length (or an explicit `startIndex`), into an array that becomes
-  // the last argument. Similar to ES6â€™s "rest parameter".
+  // the last argument. Similar to ES6’s "rest parameter".
   var restArguments = function(func, startIndex) {
     startIndex = startIndex == null ? func.length - 1 : +startIndex;
     return function() {
@@ -2389,7 +2389,7 @@ function isnan (val) {
   };
 
   // Sample **n** random values from a collection using the modern version of the
-  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisherâ€“Yates_shuffle).
+  // [Fisher-Yates shuffle](http://en.wikipedia.org/wiki/Fisher–Yates_shuffle).
   // If **n** is not specified, returns a single random element.
   // The internal `guard` argument allows it to work with `map`.
   _.sample = function(obj, n, guard) {
@@ -3410,7 +3410,7 @@ function isnan (val) {
 
   _.noop = function(){};
 
-  // Creates a function that, when passed an object, will traverse that objectâ€™s
+  // Creates a function that, when passed an object, will traverse that object’s
   // properties down the given `path`, specified as an array of keys or indexes.
   _.property = function(path) {
     if (!_.isArray(path)) {
@@ -33412,7 +33412,7 @@ exports.version = __webpack_require__(381).version;
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
 // For example, formatDecimal(1.23) returns ["123", 0].
 /* harmony default export */ __webpack_exports__["a"] = (function(x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, Â±Infinity
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
   var i, coefficient = x.slice(0, i);
 
   // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
@@ -43819,7 +43819,7 @@ var IntRangeSliderView = /** @class */ (function (_super) {
     function IntRangeSliderView() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         // range numbers can be separated by a hyphen, colon, or an en-dash
-        _this._range_regex = /^\s*([+-]?\d+)\s*[-:â€“]\s*([+-]?\d+)/;
+        _this._range_regex = /^\s*([+-]?\d+)\s*[-:–]\s*([+-]?\d+)/;
         return _this;
     }
     IntRangeSliderView.prototype.update = function (options) {
@@ -43842,7 +43842,7 @@ var IntRangeSliderView = /** @class */ (function (_super) {
         var format = this.model.readout_formatter;
         return value.map(function (v) {
             return format(v);
-        }).join(' â€“ ');
+        }).join(' – ');
     };
     /**
      * Parse value from a string
@@ -44473,7 +44473,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var prefixes = ["y","z","a","f","p","n","Âµ","m","","k","M","G","T","P","E","Z","Y"];
+var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
 
 /* harmony default export */ __webpack_exports__["a"] = (function(locale) {
   var group = locale.grouping && locale.thousands ? Object(__WEBPACK_IMPORTED_MODULE_1__formatGroup__["a" /* default */])(locale.grouping, locale.thousands) : __WEBPACK_IMPORTED_MODULE_7__identity__["a" /* default */],
@@ -44549,8 +44549,8 @@ var prefixes = ["y","z","a","f","p","n","Âµ","m","","k","M","G","T","P","E","Z
         valuePrefix = (valueNegative ? (sign === "(" ? sign : "-") : sign === "-" || sign === "(" ? "" : sign) + valuePrefix;
         valueSuffix = (type === "s" ? prefixes[8 + __WEBPACK_IMPORTED_MODULE_6__formatPrefixAuto__["b" /* prefixExponent */] / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : "");
 
-        // Break the formatted value into the integer â€œvalueâ€ part that can be
-        // grouped, and fractional or exponential â€œsuffixâ€ part that is not.
+        // Break the formatted value into the integer “value” part that can be
+        // grouped, and fractional or exponential “suffix” part that is not.
         if (maybeSuffix) {
           i = -1, n = value.length;
           while (++i < n) {
@@ -47395,7 +47395,7 @@ if (util && util.inspect && util.inspect.custom) {
         installMessageChannelImplementation();
 
     } else if (doc && "onreadystatechange" in doc.createElement("script")) {
-        // For IE 6â€“8
+        // For IE 6–8
         installReadyStateChangeImplementation();
 
     } else {
@@ -49205,7 +49205,7 @@ function GHASH (key) {
 }
 
 // from http://bitwiseshiftleft.github.io/sjcl/doc/symbols/src/core_gcm.js.html
-// by Juho VÃ¤hÃ¤-Herttua
+// by Juho Vähä-Herttua
 GHASH.prototype.ghash = function (block) {
   var i = -1
   while (++i < block.length) {
@@ -72142,7 +72142,7 @@ var FloatRangeSliderView = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._parse_value = parseFloat;
         // matches: whitespace?, float, whitespace?, (hyphen, colon, or en-dash), whitespace?, float
-        _this._range_regex = /^\s*([+-]?(?:\d*\.?\d+|\d+\.)(?:[eE][-:]?\d+)?)\s*[-:â€“]\s*([+-]?(?:\d*\.?\d+|\d+\.)(?:[eE][+-]?\d+)?)/;
+        _this._range_regex = /^\s*([+-]?(?:\d*\.?\d+|\d+\.)(?:[eE][-:]?\d+)?)\s*[-:–]\s*([+-]?(?:\d*\.?\d+|\d+\.)(?:[eE][+-]?\d+)?)/;
         return _this;
     }
     /**
