@@ -28,6 +28,13 @@ function channels(ws, req) {
 	});
 }
 
+function post(req, res, next) {
+	let id = req.params.id;
+	let kernel = Kernel.kernel(id);
+	res.json(kernel.restart());
+}
+
 module.exports = {
+	post: post,
 	channels: channels
 };

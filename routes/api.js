@@ -27,6 +27,7 @@ router.post('/sessions', sessions.post);
 router.patch('/sessions/:id(*)', sessions.patch);
 router.delete('/sessions/:id(*)', sessions.delete);
 
+router.post('/kernels/:id(*)/restart', kernels.post);
 router.ws('/kernels/:id/channels', kernels.channels);
 
 router.get('/config/tree', function(req, res, next) {

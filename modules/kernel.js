@@ -195,6 +195,12 @@ class Kernel {
 	restart() {
 		this.process.kill('SIGKILL');
 		// kernel restart automaticaly by check_kernel()
+		return ({
+			id: this.id,
+			last_activity: new Date(),		// this is not accurate.
+			execute_status: 'idle',
+			name: this.kernel_name
+		});
 	}
 	dispose() {
 		try {
@@ -323,8 +329,8 @@ class Kernel {
 			JSON.stringify(content),
 			opts.buffers
 		];
-		console.log('key: ', key);
-		console.log('msg:', msg_list);
+		//console.log('key: ', key);
+		//console.log('msg:', msg_list);
 		let s = hash(key, msg_list.join(''));
 		//console.log('hash: ', s);
 		return([
