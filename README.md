@@ -70,6 +70,10 @@ Bob --> Alice: Authentication Response
 
 * ipywidgetを動かす
 
+* クライアントのJavascriptを整理する
+
+  とりあえずオリジナルと同じbuildが出来る程度にはしたので、Javascriptの修正が可能になった
+
 ## TODO
 
 * 雑多なコマンドや機能が正しく動くか確認して行く
@@ -83,7 +87,9 @@ Bob --> Alice: Authentication Response
 
   ドキュメントの共有を実装する
 
-* クライアントのJavascriptを整理する
+* bowerをやめる
+
+* クライアントのJavascriptの依存モジュールを最新にする
 
 ## 将来
 
