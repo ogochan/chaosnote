@@ -8,6 +8,8 @@ This is a simple re-implementation of Jupyter notebook on Javascript(Node.js)
 $ git clone https://github.com/ogochan/chaosnote.git
 $ cd chaosnote
 $ npm install
+$ npm run-script bower
+$ npm run-script build-scripts
 ```
 
 # status
@@ -43,6 +45,8 @@ Bob --> Alice: Authentication Response
   サーバを1つ立ち上げるだけで、ワークスペースの干渉なしで複数人でサーバを使うことが出来ます(本家にはない機能！)
 
   まだノートの共有機能を実装していないので、直接ノートを共有することは出来ません
+
+* ipywidgetが動きます
 
 * 一応ノートを作成してコードを走らせて保存することは出来ますが、細かい機能については追い追い...
 
