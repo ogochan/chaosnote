@@ -1,8 +1,8 @@
 const fs = require('fs');
-const path = require('path');
+const Path = require('path');
 
 function make_filename(dir, body) {
-	return (path.resolve(global.env.kernels_dir, dir + '/' + body));
+	return (Path.resolve(global.env.kernels_dir, dir + '/' + body));
 }
 function make_resourcefilename(dir, body) {
 	return (`/kernelspecs/${dir}/${body}`);

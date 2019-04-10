@@ -11,6 +11,8 @@ const User = require('./modules/user').User;
 
 global.env = require('./config/config');
 
+console.log(global.env);
+
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -55,7 +57,6 @@ app.use(passport.session());
 
 app.use('/kernelspecs', express.static(global.env.kernels_dir));
 app.use('/static', express.static(path.join(__dirname, 'public')));
-//app.use('/files', express.static(global.env.data_dir));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tree', treeRouter);
