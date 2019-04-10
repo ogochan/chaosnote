@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "chaosnote",
+    "password": "ChaosNote",
+    "database": "chaosnote_development",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "chaosnote",
+    "password": "ChaosNote",
+    "database": "chaosnote_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "chaosnote",
+    "password": "ChaosNote",
+    "database": "chaosnote_production",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
