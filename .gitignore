@@ -1,0 +1,10 @@
+public/components/
+node_modules/
+package-lock.json
+password
+sessions
+*.map
+*~
+log/
+tmp/
+log
