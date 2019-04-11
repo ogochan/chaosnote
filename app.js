@@ -1,3 +1,4 @@
+global.env = require('./config/env');
 const createError = require('http-errors');
 const express = require('express');
 const app = express();
@@ -9,7 +10,6 @@ const router = express.Router();
 const Session = require('./modules/session');
 const User = require('./modules/user').User;
 
-global.env = require('./config/config');
 
 console.log(global.env);
 
@@ -83,7 +83,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-User.init();
 Session.init();
 
 module.exports = app;

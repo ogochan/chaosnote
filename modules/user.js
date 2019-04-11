@@ -1,8 +1,8 @@
 const Fs = require('fs');
 const bcrypt = require('bcrypt');
+const models = require('../models');
 const SALT_ROUNDS = 10;
-
-let users;
+const Content = require('./content');
 
 function is_authenticated(req, res, next) {
 	console.log(req.session);
@@ -15,11 +15,26 @@ function is_authenticated(req, res, next) {
 }
 
 function auth_user(name, password) {
-	let user = users[name];
-	if ( user ) {
-		return ( bcrypt.compareSync(password, user.hash_password) );
-	}
-	return (false);
+	return new Promise((done, fail) => {
+		models.user.findOne({
+			where: {
+				name: name },
+		}).then((user) => {
+			console.log(user);
+			if ( user ) {
+				if  ( bcrypt.compareSync(password, user.hash_password) ) {
+					console.log("auth ok");
+					done(user);
+				} else {
+					console.log("auth fail");
+					fail(user);
+				}
+			} else {
+				console.log("user none");
+				fail(null);
+			}
+		});
+	});
 }
 
 class User {
@@ -32,7 +47,6 @@ class User {
 		Object.keys(user_info).forEach((key) => {
 			this[key] = user_info[key];
 		});
-		users[name] = this;
 	}
 	static current(req) {
 		let user;
@@ -44,29 +58,19 @@ class User {
 		}
 		return (user);
 	}
-	static init() {
-		users = {};
-		console.log('load users');
-		try {
-			let users_str = Fs.readFileSync(global.env.password_path);
-			let env_load = JSON.parse(users_str);
-		    Object.keys(env_load).forEach((name) => {
-				let user_info = env_load[name];
-				console.log('user_info:', user_info);
-				let user = new User(user_info.name,user_info);
+	create() {
+		return new Promise((done, fail) => {
+			models.user.create({
+				name: this.name,
+				hash_password: this.hash_password
+			}).then((user) => {
+				console.log(user);
+				Content.new_user(user.name);
+				done(user);
+			}).catch((err) => {
+				console.log(err);
 			});
-		}
-		catch {
-		};
-	}
-	static save() {
-		let users_str = JSON.stringify(users);
-		console.log(users_str);
-		try {
-			Fs.writeFileSync(global.env.password_path, users_str);
-		}
-		catch {
-		}
+		});
 	}
 	set password(p) {
 		this.hash_password = bcrypt.hashSync(p, SALT_ROUNDS);
@@ -75,7 +79,12 @@ class User {
 		return (this.hash_password);
 	}
 	static check(name) {
-		return (users[name] ? true : false);
+		models.user.findOne({
+			where: {
+				name: name },
+		}).then((user) => {
+			return (user ? true : false);
+		});
 	}
 }
 

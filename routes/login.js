@@ -16,18 +16,17 @@ passport.use(new Local(
 		console.log('done', done);
 
 		process.nextTick(() => {
-			let result = auth_user(user_name, password);
-			console.log("result:", result);
-			if ( result ) {
+			auth_user(user_name, password).then(() => {
+				console.log("here");
 				return done(null, {
 					user_name: user_name
 				});
-			} else {
+			}).catch(() => {
 				console.log('login error');
 				return done(null, false, {
 					message: 'fail'
 				});
-			}
+			});
 		});
 	}));
 
@@ -73,7 +72,7 @@ function login(req, res, next) {
 								});
 		} else {
 			req.login(user, (error, next) => {
-				console.log(error);
+				console.log("error", error);
 				if (error) {
 					console.log("error");
 					res.render('login', { title: 'Login',
@@ -116,8 +115,9 @@ function signup_post(req, res, next) {
 			name: user_name
 		})
 		user.password = password;
-		User.save();
-		res.redirect('/login');
+		user.create().then(() => {
+			res.redirect('/login');
+		});
 	} else {
 		console.log('user duplicate', user_name);
 		res.render('signup', { title: 'Signup',

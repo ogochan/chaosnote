@@ -39,6 +39,12 @@ class Content {
 			nbformat_minor: 2
 		}
 	}
+	static new_user(user) {
+		let dir = make_path(BASE_DIR, user);
+		if ( !Fs.existsSync(dir) ) {
+			Fs.mkdirSync(dir, 0o755);
+		}
+	}
 	static delete_(user, path) {
 		let dir = make_path(BASE_DIR, user);
 		let file_path = make_path(dir, path);
