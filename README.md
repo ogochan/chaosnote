@@ -10,6 +10,8 @@ $ cd chaosnote
 $ npm install
 $ npm run-script bower
 $ npm run-script build-scripts
+$ ./node_modules/.bin/sequelize db:create
+$ ./node_modules/.bin/sequelize db:migrate
 ```
 
 # status
@@ -49,6 +51,12 @@ Bob --> Alice: Authentication Response
 * ipywidgetが動きます
 
 * 一応ノートを作成してコードを走らせて保存することは出来ますが、細かい機能については追い追い...
+
+* ユーザ情報のデータベース化
+
+  PostgreSQLを使いますので、PostgreSQLの設定が必要です
+
+  必要に応じて`config/config.json`を修正して下さい
 
 # ロードマップ
 
