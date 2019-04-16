@@ -156,15 +156,12 @@ function socket_on_message(ws, channel, _ident, _delim, _hmac, _header, _last_he
 let kernels = {};
 
 class Kernel {
-	static load(defs) {
+/*	static load(defs) {
 		kernels = {};
 		Object.keys(defs).forEach((key) => {
 			//console.log('kernel:', defs[key]);
 			//new Kernel(defs[key].kernel_name, defs[key].id); // kernel isn't needed for restore session
 		});
-	}
-	static kernel(id) {
-		return (kernels[id]);
 	}
 	static save() {
 		let save_kernels = {};
@@ -175,6 +172,10 @@ class Kernel {
 			save_kernels[key].kernel_name = kernels[key].kernel_name;
 		});
 		return (save_kernels);
+	}
+*/
+	static kernel(id) {
+		return (kernels[id]);
 	}
 	constructor(kernel_name, id) {
 		let kernel_id = ( typeof id === 'undefined' ) ? new_id() : id;
@@ -205,6 +206,7 @@ class Kernel {
 	dispose() {
 		try {
 			clearInterval(this.hb);
+			console.log(`${this.process.pid} kill`);
 			this.process.kill('SIGKILL');
 		}
 		catch {};

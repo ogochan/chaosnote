@@ -13,13 +13,9 @@ class Session {
 		this.name = name;
 		this.type = type;
 		this.kernel = kernel;
-		sessions[this.id] = this;
-		if ( !UserSessions[user] ) {
-			UserSessions[user] = {
-				sessions: {}
-			};
-		}
-		UserSessions[user].sessions[this.id] = this;
+		this.user_name = user;
+		this.register();
+		kernel.session = this;
 	}
 	static user_sessions(user) {
 		if ( !UserSessions[user] ) {
@@ -29,20 +25,87 @@ class Session {
 		}
 		return (UserSessions[user]);
 	}
+	register() {
+		sessions[this.id] = this;
+		if ( !UserSessions[this.user_name] ) {
+			UserSessions[this.user_name] = {
+				sessions: {}
+			};
+		}
+		UserSessions[this.user_name].sessions[this.id] = this;
+	}
 	static init() {
 		sessions = {};
 	}
+<<<<<<< HEAD
+=======
+/*	static load() {
+		//console.log('load sessions');
+		try {
+			let env_str = Fs.readFileSync(global.env.save_env_path);
+			let env = JSON.parse(env_str);
+			//Kernel.load(env.kernels);
+			Object.keys(env.sessions).forEach((key) => {
+				let v = env.sessions[key];
+				//console.log('load session:', v);
+				let o = new Session(v.path, v.type, v.name, null, v.id);	// assign is needed
+			});
+		}
+		catch {
+			Kernel.load({});
+		};
+	}
+	save() {
+		if ( this.kernel ) {
+			return ({
+				id: this.id,
+				path: this.path,
+				name: this.name,
+				type: this.type,
+				kernel: this.kernel.id
+			});
+		} else {
+			return ({
+				id: this.id,
+				path: this.path,
+				name: this.name,
+				type: this.type,
+			});
+		}
+	}
+	static save() {
+		let save_sessions = {};
+		Object.keys(sessions).forEach((key) => {
+			save_sessions[key] = sessions[key].save();
+		});
+		let this_env = {
+			sessions: save_sessions,
+			kernels: Kernel.save()
+		};
+	
+		let env_str = JSON.stringify(this_env);
+		Fs.writeFileSync(global.env.save_env_path, env_str);
+		//console.log("envs:", env_str);
+	}
+*/
+>>>>>>> d20ee91947681c5425511b2bb8171bb02da5f30b
 	static session(id) {
 		return (sessions[id]);
+	}
+	dispose() {
+		let id = this.id;
+		let user_name = this.user_name;
+
+		this.kernel.dispose();
+		delete sessions[id];
+		delete UserSessions[user_name].sessions[id];
 	}
 	static delete_(user, id) {
 		let succ = false;
 		let session = sessions[id];
 		if ( session ) {
-			session.kernel.dispose();
-			delete sessions[id];
+			session.dispose()
 			succ = true;
-			delete UserSessions[user].sessions[session_id];
 		}
 		return (succ);
 	}
@@ -76,8 +139,9 @@ class Session {
 		let infos = [];
 		Object.keys(session.sessions).forEach((key) => {
 			//console.log('key: ', key, sessions[key]);
-			if ( sessions[key] ) {
-				infos.push(sessions[key].info());
+			let ses = sessions[key];
+			if ( ses ) {
+				infos.push(ses.info());
 			}
 		});
 		return (infos);
