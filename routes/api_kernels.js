@@ -34,7 +34,7 @@ function restart(req, res, next) {
 	let kernel = Kernel.kernel(id);
 	let ret;
 	if ( typeof kernel !== 'undefined' ) {
-		console.log(kernel.session);
+		//console.log(kernel.session);
 		let session = Session.session(kernel.session.id);
 		if ( typeof session !== 'undefined') {
 			kernel.session.register();
