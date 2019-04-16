@@ -1,4 +1,5 @@
 const Kernel = require('../modules/kernel');
+const Session = require('../modules/session');
 
 function channels(ws, req) {
 	ws.on('message', _message => {
@@ -28,13 +29,37 @@ function channels(ws, req) {
 	});
 }
 
-function post(req, res, next) {
+function restart(req, res, next) {
 	let id = req.params.id;
 	let kernel = Kernel.kernel(id);
-	res.json(kernel.restart());
+	let ret;
+	if ( typeof kernel !== 'undefined' ) {
+		console.log(kernel.session);
+		let session = Session.session(kernel.session.id);
+		if ( typeof session !== 'undefined') {
+			kernel.session.register();
+		} else {
+			session = kernel.session;
+		}
+		res.json(session.kernel.restart());
+	} else {
+		res.sendStatus(304);		//	no kernel(not started)
+	}
+}
+
+function interrupt(req, res, next) {
+	let id = req.params.id;
+	let kernel = Kernel.kernel(id);
+	if ( typeof kernel !== 'undefined' ) {
+		kernel.session.dispose();
+		res.sendStatus(204);
+	} else {
+		res.sendStatus(304);		//	no kernel(not started)
+	}
 }
 
 module.exports = {
-	post: post,
-	channels: channels
+	restart: restart,
+	channels: channels,
+	interrupt: interrupt
 };

@@ -141,11 +141,18 @@ class Content {
 			if (( typeof checkpoint === 'undefined' ) ||
 				( !checkpoint )) {
 				path = this.file_path;
+				this.stat = Fs.statSync(path);
 			} else {
 				checkpoint_dir = `${Path.dirname(this.file_path)}/.ipynb_checkpoints`;
 				path = `${checkpoint_dir}/${Path.basename(this.file_path, '.ipynb')}-checkpoint.ipynb`;
+				try {
+					this.stat = Fs.statSync(path);
+				}
+				catch {
+					path = this.file_path;
+					this.stat = Fs.statSync(path);
+				}
 			}
-			this.stat = Fs.statSync(path);
 			this.size = this.stat.size;
 			if ( this.file_path.match(/\.ipynb$/) ) {
 				this.type = "notebook";

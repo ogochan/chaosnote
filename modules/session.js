@@ -13,13 +13,9 @@ class Session {
 		this.name = name;
 		this.type = type;
 		this.kernel = kernel;
-		sessions[this.id] = this;
-		if ( !UserSessions[user] ) {
-			UserSessions[user] = {
-				sessions: {}
-			};
-		}
-		UserSessions[user].sessions[this.id] = this;
+		this.user_name = user;
+		this.register();
+		kernel.session = this;
 	}
 	static user_sessions(user) {
 		if ( !UserSessions[user] ) {
@@ -29,10 +25,19 @@ class Session {
 		}
 		return (UserSessions[user]);
 	}
+	register() {
+		sessions[this.id] = this;
+		if ( !UserSessions[this.user_name] ) {
+			UserSessions[this.user_name] = {
+				sessions: {}
+			};
+		}
+		UserSessions[this.user_name].sessions[this.id] = this;
+	}
 	static init() {
 		sessions = {};
 	}
-	static load() {
+/*	static load() {
 		//console.log('load sessions');
 		try {
 			let env_str = Fs.readFileSync(global.env.save_env_path);
@@ -80,17 +85,24 @@ class Session {
 		Fs.writeFileSync(global.env.save_env_path, env_str);
 		//console.log("envs:", env_str);
 	}
+*/
 	static session(id) {
 		return (sessions[id]);
+	}
+	dispose() {
+		let id = this.id;
+		let user_name = this.user_name;
+
+		this.kernel.dispose();
+		delete sessions[id];
+		delete UserSessions[user_name].sessions[id];
 	}
 	static delete_(user, id) {
 		let succ = false;
 		let session = sessions[id];
 		if ( session ) {
-			session.kernel.dispose();
-			delete sessions[id];
+			session.dispose()
 			succ = true;
-			delete UserSessions[user].sessions[session_id];
 		}
 		return (succ);
 	}
@@ -124,8 +136,9 @@ class Session {
 		let infos = [];
 		Object.keys(session.sessions).forEach((key) => {
 			//console.log('key: ', key, sessions[key]);
-			if ( sessions[key] ) {
-				infos.push(sessions[key].info());
+			let ses = sessions[key];
+			if ( ses ) {
+				infos.push(ses.info());
 			}
 		});
 		return (infos);

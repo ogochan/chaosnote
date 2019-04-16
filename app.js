@@ -11,7 +11,7 @@ const Session = require('./modules/session');
 const User = require('./modules/user').User;
 
 
-console.log(global.env);
+//console.log(global.env);
 
 var path = require('path');
 var cookieParser = require('cookie-parser');
