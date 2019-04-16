@@ -32,54 +32,6 @@ class Session {
 	static init() {
 		sessions = {};
 	}
-	static load() {
-		//console.log('load sessions');
-		try {
-			let env_str = Fs.readFileSync(global.env.save_env_path);
-			let env = JSON.parse(env_str);
-			//Kernel.load(env.kernels);
-			Object.keys(env.sessions).forEach((key) => {
-				let v = env.sessions[key];
-				//console.log('load session:', v);
-				let o = new Session(v.path, v.type, v.name, null, v.id);	// assign is needed
-			});
-		}
-		catch {
-			Kernel.load({});
-		};
-	}
-	save() {
-		if ( this.kernel ) {
-			return ({
-				id: this.id,
-				path: this.path,
-				name: this.name,
-				type: this.type,
-				kernel: this.kernel.id
-			});
-		} else {
-			return ({
-				id: this.id,
-				path: this.path,
-				name: this.name,
-				type: this.type,
-			});
-		}
-	}
-	static save() {
-		let save_sessions = {};
-		Object.keys(sessions).forEach((key) => {
-			save_sessions[key] = sessions[key].save();
-		});
-		let this_env = {
-			sessions: save_sessions,
-			kernels: Kernel.save()
-		};
-	
-		let env_str = JSON.stringify(this_env);
-		Fs.writeFileSync(global.env.save_env_path, env_str);
-		//console.log("envs:", env_str);
-	}
 	static session(id) {
 		return (sessions[id]);
 	}

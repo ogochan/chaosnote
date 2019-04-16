@@ -69,6 +69,7 @@ class User {
 				done(user);
 			}).catch((err) => {
 				console.log(err);
+				fail();
 			});
 		});
 	}

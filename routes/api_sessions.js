@@ -31,11 +31,8 @@ function post(req, res, next)	{
 			kernel_name = '** not found **';
 		};
 	}
-	//console.log('kernel_name:', kernel_name);
 	kernel = new Kernel(kernel_name);
 	session = new Session(req.session.passport.user, path, "notebook", "", kernel);
-	//Session.save();
-	//console.log(session);
 	session.kernel.start(session.id);
 
 	res.json(session.info());
