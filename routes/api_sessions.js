@@ -26,14 +26,14 @@ function post(req, res, next)	{
 	} else {
 		try {
 			base = new Content(User.current(req), path).load(true);
-			console.log(base);
+			//console.log(base);
 			kernel_name = base.metadata.kernelspec.name;
 		}
 		catch {
 			kernel_name = '** not found **';
 		};
 	}
-	console.log('kernel_name:', kernel_name);
+	//console.log('kernel_name:', kernel_name);
 	kernel = new Kernel(kernel_name);
 	session = new Session(req.session.passport.user, path, "notebook", "", kernel);
 	//Session.save();

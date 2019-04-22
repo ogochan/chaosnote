@@ -180,7 +180,13 @@ class Kernel {
 	constructor(kernel_name, id) {
 		let kernel_id = ( typeof id === 'undefined' ) ? new_id() : id;
 		this.kernel_name = kernel_name;
-		let connection_file_name = global.env.connection_dir + `/kernel-${kernel_id}.json`;
+		let connection_dir = `${process.env.XDG_RUNTIME_DIR}/jupyter`;
+		if ( ! fs.existsSync(connection_dir) ) {
+			fs.mkdirSync(connection_dir, {
+				recursive: true,
+				mode: 0o700 });
+		}
+		let connection_file_name = connection_dir + `/kernel-${kernel_id}.json`;
 
 		this.id = kernel_id;
 		this.connection_file_name = connection_file_name;
@@ -206,7 +212,7 @@ class Kernel {
 	dispose() {
 		try {
 			clearInterval(this.hb);
-			console.log(`${this.process.pid} kill`);
+			//console.log(`${this.process.pid} kill`);
 			this.process.kill('SIGKILL');
 		}
 		catch {};
@@ -239,7 +245,7 @@ class Kernel {
 			};
 			this.sockets.hb.on('message', hb_recv);
 			this.hb_timeout = setTimeout(() => {
-				console.log("timeout");
+				//console.log("timeout");
 				clean_up();
 				this._is_alive = false;
 				resolve();

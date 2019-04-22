@@ -5,7 +5,7 @@ const SALT_ROUNDS = 10;
 const Content = require('./content');
 
 function is_authenticated(req, res, next) {
-	console.log(req.session);
+	//console.log(req.session);
 
 	if ( req.isAuthenticated() ) {
 		return (next());
@@ -20,17 +20,17 @@ function auth_user(name, password) {
 			where: {
 				name: name },
 		}).then((user) => {
-			console.log(user);
+			//console.log(user);
 			if ( user ) {
 				if  ( bcrypt.compareSync(password, user.hash_password) ) {
-					console.log("auth ok");
+					//console.log("auth ok");
 					done(user);
 				} else {
-					console.log("auth fail");
+					//console.log("auth fail");
 					fail(user);
 				}
 			} else {
-				console.log("user none");
+				//console.log("user none");
 				fail(null);
 			}
 		});
@@ -64,11 +64,11 @@ class User {
 				name: this.name,
 				hash_password: this.hash_password
 			}).then((user) => {
-				console.log(user);
+				//console.log(user);
 				Content.new_user(user.name);
 				done(user);
 			}).catch((err) => {
-				console.log(err);
+				//console.log(err);
 			});
 		});
 	}

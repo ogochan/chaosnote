@@ -1,5 +1,4 @@
 module.exports =  {
-	connection_dir: `${process.env.XDG_RUNTIME_DIR}/jupyter`,
 	kernels_dir: `${process.env.HOME}/.ipython/kernels`,
 	home: process.env.HOME,
 	data_dir: `${process.env.HOME}/jupyter`,

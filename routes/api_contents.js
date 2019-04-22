@@ -83,11 +83,12 @@ function put(req, res, next) {
 }
 
 function post(req, res, next) {
+/*
 	console.log("post");
 	console.log('body: ', req.body);
 	console.log('path: ', req.path);
 	console.log('params: ', req.params);
-
+*/
 	if ( req.params.path ) {
 		params_path = req.params.path;
 	} else {
