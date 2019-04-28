@@ -83,12 +83,12 @@ function put(req, res, next) {
 }
 
 function post(req, res, next) {
-/*
+
 	console.log("post");
 	console.log('body: ', req.body);
 	console.log('path: ', req.path);
 	console.log('params: ', req.params);
-*/
+
 	if ( req.params.path ) {
 		params_path = req.params.path;
 	} else {
@@ -101,30 +101,29 @@ function post(req, res, next) {
 
 		stat = content.save(false);
 		stat.content = null,
-		stat.format = null,
-		stat.mimetype = null,
-		stat.name = name,
 		stat.type = 'notebook';
 	} else
 	if ( req.body.type === 'directory' ) {
 		name = Content.new_folder(User.current(req), params_path);
 		path = make_path(params_path, name);
 		stat = Content.stat(User.current(req), path);
-		stat.format = null;
-		stat.mimetype = null;
-		stat.name = name,
 		stat.size = null;
 		stat.type = 'directory';
-	} else
+/*	} else
 	if ( req.body.type === 'file' ) {
 		name = Content.new_file(User.current(req), params_path, req.body.ext);
 		path = make_path(params_path, name);
 		stat = Content.stat(User.current(req), path);
-		stat.format = null;
-		stat.mimetype = null;
-		stat.name = name,
-		stat.size = null;
-		stat.type = 'directory';
+		stat.type = 'file';
+*/	} else {
+		if ( req.body.copy_from ) {
+			let from = req.body.copy_from;
+			name = Content.copy_file(User.current(req), params_path, from);
+			path = make_path(params_path, name);
+			stat = Content.stat(User.current(req), path);
+		} else {
+			stat = {};
+		};
 	}
 
 	res.json(stat);

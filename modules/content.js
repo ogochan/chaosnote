@@ -99,6 +99,7 @@ class Content {
 
 		return (name);
 	}
+/*	incorrect !!!!
 	static new_file(user, path, ext) {
 		let dir = make_path(BASE_DIR, user);
 		let dir_path = make_path(dir, path);
@@ -115,16 +116,62 @@ class Content {
 
 		return (name);
 	}
+*/
+	static copy_file(user, dir, path) {
+		let dir_path = make_path(make_path(BASE_DIR, user), dir);
+		let file_path = make_path(make_path(BASE_DIR, user), path);
+
+		let ext = Path.extname(path);
+		let base_name = Path.basename(path, ext);
+		let name = `${base_name}${((ext) && ( ext != '' )) ? ext : ''}`
+		let fn = make_path(dir_path, name);
+		let count = 1;
+		while ( Fs.existsSync(fn) ) {
+			name = `${base_name}-Copy${count}${((ext) && ( ext != '' )) ? ext : ''}`;
+			fn = make_path(dir_path, name);
+			count ++;
+		}
+		Fs.copyFileSync(file_path, fn);
+		return (name);
+	}
 	static stat(user, path)  {
+		let type;
+		let mime_type;
 		let dir = make_path(BASE_DIR, user);
 		let fn = make_path(dir, path);
 		let _stat = Fs.statSync(fn);
+		let ext = Path.extname(path);
+		let size;
+
+		if ( _stat.isFile() ) {
+			if ( path.match(/\.ipynb$/) ) {
+				type = 'notebook';
+				mime_type = null;
+			} else
+			if ( path.match(/.txt$/) ) {
+				type = 'file';
+				mime_type = 'text/plain';
+			} else {
+				type = "file";
+				mime_type = Mime.getType(fn);
+			}
+			size = _stat.size;
+		} else {
+			type = "directory";
+			mime_type = null;
+			size = null;
+		}
 		return ({
 			content: null,
 			created: _stat.created,
 			last_modified: _stat.mtime,
+			format: null,
+			mimetype: mime_type,
+			type: type,
 			path: path,
-			size: null,
+			size: size,
+			name: Path.basename(path),
+			fn: fn,
 			writable: ( _stat.mode & 0o200 ) ? true: false,
 		});
 	}
