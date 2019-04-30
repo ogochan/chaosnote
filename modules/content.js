@@ -17,26 +17,28 @@ function make_path(dir, file){
 
 class Content {
 	constructor(user, path) {
-		let dir = make_path(BASE_DIR, user);
-		let file_path = make_path(dir, path);
-		let stat = Fs.statSync(file_path);
+		let stat = Content.stat(user, path);
 
-		this.file_path = file_path;
-		this.user = user;
-		this.stat = stat;
-		this.name = Path.basename(path);
-		this.path = path;
-		this.created = stat.ctime;
-		this.format = null;
-		this.last_modified = stat.mtime;
-		this.mimetype = null;
-		this.size = null;
-		this.writable = ( stat.mode & 200 ) ? true : false
-		this.content = {
-			cells: [],
-			metadata: {},
-			nbformat: 4,
-			nbformat_minor: 2
+		this.file_path = stat.file_path;
+		this.user = stat.user;
+		this.stat = stat.stat;
+		this.name = stat.name
+		this.path = stat.path;
+		this.created = stat.created;
+		this.format = stat.format;
+		this.last_modified = stat.last_modified;
+		this.mimetype = stat.mimetype;
+		this.size = stat.size;
+		this.writable = stat.writable;
+		if ( stat.type == 'notebook' ) {
+			this.content = {
+				cells: [],
+				metadata: {},
+				nbformat: 4,
+				nbformat_minor: 2
+			}
+		} else {
+			this.content = null;
 		}
 	}
 	static new_user(user) {
@@ -99,24 +101,6 @@ class Content {
 
 		return (name);
 	}
-/*	incorrect !!!!
-	static new_file(user, path, ext) {
-		let dir = make_path(BASE_DIR, user);
-		let dir_path = make_path(dir, path);
-
-		let name = `Untitled${((ext) && ( ext != '' )) ? '.' + ext : ''}`
-		let fn = make_path(dir_path, name);
-		let count = 2;
-		while ( Fs.existsSync(fn) ) {
-			name = `Untitled Folder${count}${((ext) && ( ext != '' )) ? '.' + ext : ''}`;
-			fn = make_path(dir_path, name);
-			count ++;
-		}
-		Fs.mkdirSync(fn, 0o755);
-
-		return (name);
-	}
-*/
 	static copy_file(user, dir, path) {
 		let dir_path = make_path(make_path(BASE_DIR, user), dir);
 		let file_path = make_path(make_path(BASE_DIR, user), path);
@@ -151,6 +135,10 @@ class Content {
 			if ( path.match(/.txt$/) ) {
 				type = 'file';
 				mime_type = 'text/plain';
+			} else
+			if ( path.match(/.md$/) ) {
+				type = 'markdown';
+				mime_type = 'text/plain';
 			} else {
 				type = "file";
 				mime_type = Mime.getType(fn);
@@ -163,7 +151,7 @@ class Content {
 		}
 		return ({
 			content: null,
-			created: _stat.created,
+			created: _stat.ctime,
 			last_modified: _stat.mtime,
 			format: null,
 			mimetype: mime_type,
@@ -171,8 +159,9 @@ class Content {
 			path: path,
 			size: size,
 			name: Path.basename(path),
-			fn: fn,
+			file_path: fn,
 			writable: ( _stat.mode & 0o200 ) ? true: false,
+			stat: _stat
 		});
 	}
 	load(checkpoint) {
@@ -180,8 +169,6 @@ class Content {
 		let type;
 		let mime_type;
 
-		//console.log('stat:', this.stat);
-		//console.log('path:', this.file_path);
 		if ( this.stat.isFile() ) {
 			let checkpoint_dir;
 			let path;
@@ -200,7 +187,7 @@ class Content {
 					this.stat = Fs.statSync(path);
 				}
 			}
-			this.size = this.stat.size;
+			this.size = this.size;
 			if ( this.file_path.match(/\.ipynb$/) ) {
 				this.type = "notebook";
 				this.format = "json";
@@ -211,7 +198,11 @@ class Content {
 			} else {
 				if ( this.file_path.match(/.txt$/) ) {
 					this.type = 'file';
-					mime_type = 'text/plain';
+					this.mime_type = 'text/plain';
+				} else
+				if ( this.file_path.match(/.md$/) ) {
+					this.type = 'markdown';
+					this.mime_type = 'text/plain';
 				} else {
 					this.type = 'file';
 					this.mime_type = Mime.getType(this.file_path);

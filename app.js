@@ -25,6 +25,7 @@ const filesRouter = require('./routes/files');
 const viewRouter = require('./routes/view');
 const treeRouter = require('./routes/tree');
 const apiRouter = require('./routes/api');
+const editRouter = require('./routes/edit');
 const notebooksRouter = require('./routes/notebooks');
 const nbextensionsRouter = require('./routes/nbextensions');
 
@@ -63,6 +64,7 @@ app.use('/tree', treeRouter);
 app.use('/notebooks', notebooksRouter);
 app.use('/files', filesRouter);
 app.use('/view', viewRouter);
+app.use('/edit', editRouter);
 app.use('/api', apiRouter);
 app.use('/nbextensions', nbextensionsRouter);
 app.use('/nbextensions', express.static(path.join(__dirname, 'public/nbextensions')));
