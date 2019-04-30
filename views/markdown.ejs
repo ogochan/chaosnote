@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Home</title>
+
+    <meta charset="utf-8">
+    <link id="favicon" rel="shortcut icon" type="image/x-icon" href="/static/base/images/favicon.ico?v=97c6417ed01bdc0ae3ef32ae4894fd03">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="/static/components/jquery-ui/themes/smoothness/jquery-ui.min.css?v=9b2c8d3489227115310662a343fce11c" type="text/css" />
+    <link rel="stylesheet" href="/static/components/jquery-typeahead/dist/jquery.typeahead.min.css?v=7afb461de36accb1aa133a1710f5bc56" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style/style.min.css?v=4e52139bcf73c6fa106fdc159205a39b" type="text/css"/>
+    <link rel="stylesheet" href="/static/custom/custom.css" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.0.5/es5-shim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/2.4.1/lodash.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.4/ace.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/9.1.0/styles/github.min.css">
+    <script src="/static/markdown/markdown-it.js"></script>
+    <script src="https://twemoji.maxcdn.com/twemoji.min.js"></script>
+    <link rel="stylesheet" href="/static/markdown/index.css">
+    <script src="/static/markdown/index.min.js"></script>
+  </head>
+  <body>
+	<div id="header">
+	  <div id="header-container" class="container">
+	  </div>
+	</div>
+    <div class="container full-height" style="width:100%;">
+	  <div class="row full-height">
+        <div class="col-xs-6 full-height">
+          <div class="demo-control"><a href="#" class="source-clear">clear</a></div>
+          <div class="source full-height" id="editor"><%= content %></div>
+        </div>
+        <section class="col-xs-6 full-height">
+          <div class="result-html full-height"></div>
+        </section>
+      </div>
+	</div>
+  </body>
+</html>
