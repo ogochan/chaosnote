@@ -6,7 +6,7 @@
 		"start": "node ./bin/www",
 		"bower": "bower install",
 		"build-scripts": "for m in notebook tree edit terminal auth; do node tools/build-main.js $m;done",
-		"build-md": "./node_modules/.bin/browserify public/markdown/index.js > public/markdown/index.min.js",
+		"build-md": "./node_modules/.bin/browserify public/markdown/edit.js > public/markdown/edit.min.js",
 		"pack-md": "./node_modules/.bin/browserify ./node_modules/markdown-it -s markdownit > ./public/markdown/markdown-it.js"
 	},
 	"devDependencies": {

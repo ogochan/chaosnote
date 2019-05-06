@@ -272,6 +272,8 @@ class Content {
 		let checkpoint_dir;
 		let path;
 		let stat;
+		let ext;
+		let content_str;
 		
 		if (( typeof checkpoint === 'undefined' ) ||
 			( !checkpoint )) {
@@ -284,22 +286,26 @@ class Content {
 			catch {
 				Fs.mkdirSync(checkpoint_dir);
 			}
-			path = `${checkpoint_dir}/${Path.basename(this.file_path, '.ipynb')}-checkpoint.ipynb`;
+			ext = `.${Path.extname(this.file_path)}`;
+			path = `${checkpoint_dir}/${Path.basename(this.file_path, ext)}-checkpoint${ext}`;
 		}
-		this.content.cells.forEach((cell) => {
-			let lines = [];
-			if ( cell.source != '' ) {
-				let source = cell.source.split('\n');
-				source.slice(0,-1).forEach((line) => {
-					lines.push(line + '\n');
-				});
-				lines.push(source.slice(-1)[0]);
-			}
-			cell.source = lines;
-		});
-
-		let content_str = JSON.stringify(this.content, null, " ");
-
+		if ( this.type == 'notebook' ) {
+			this.content.cells.forEach((cell) => {
+				let lines = [];
+				if ( cell.source != '' ) {
+					let source = cell.source.split('\n');
+					source.slice(0,-1).forEach((line) => {
+						lines.push(line + '\n');
+					});
+					lines.push(source.slice(-1)[0]);
+				}
+				cell.source = lines;
+			});
+			content_str = JSON.stringify(this.content, null, " ");
+		} else
+		if ( this.type == 'markdown' ) {
+			content_str = this.content;
+		}
 		Fs.writeFileSync(path, content_str);
 		stat = Fs.statSync(path);
 
@@ -307,7 +313,9 @@ class Content {
 		this.size = stat.size;
 		this.last_modified = stat.mtime;
 		this.writable = ( stat.mode & 0o200 ) ? true: false;
-
+		
+		return (attribute());
+/*
 		return ({
 			content: null,
 			created: stat.created,
@@ -316,9 +324,9 @@ class Content {
 			size: stat.size,
 			writable: ( stat.mode & 0o200 ) ? true: false,
 		});
-	}
-	rename(new_path) {
-		let dir = make_path(BASE_DIR, this.user);
+*/	}
+	rename(user, new_path) {
+		let dir = make_path(BASE_DIR, user);
 		let new_file_path = make_path(dir, new_path);
 		
 		Fs.renameSync(this.file_path, new_file_path);

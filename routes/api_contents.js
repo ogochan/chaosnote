@@ -138,7 +138,7 @@ function patch(req, res, next) {
 	to_path = req.body.path;
 	orig_path = req.params.path;
 	content = new Content(User.current(req), orig_path);
-	content.rename(to_path);
+	content.rename(User.current(req), to_path);
 
 	res.json(content.attribute());
 }
