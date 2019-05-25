@@ -5,6 +5,7 @@
 
 var editor;
 
+const Utils = require('../base/js/utils.js');
 
 var hljs = require('highlight.js/lib/highlight.js');
 
@@ -310,6 +311,9 @@ $(function () {
   edInit();
   
   $('#header').css('display', 'block');
+  $('#save-notebook').on('click', () => {
+    
+  });
 
 
 

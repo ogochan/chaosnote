@@ -25,30 +25,51 @@
     <script src="/static/markdown/edit.min.js"></script>
   </head>
   <body>
-	<div id="header">
-	  <div id="header-container" class="container">
-		<div id="ipython_notebook" class="nav navbar-brand">
-			<a href="/tree" title='dashboard'>
-			<img src='/static/base/images/logo.png?v=641991992878ee24c6f3826e81054a0f' alt='Chaosnote'/>
-		  </a>
-		</div>
-		<span id="save_widget" class="save_widget">
-		  <span id="notebook_name" class="filename"></span>
-		  <span class="checkpoint_status"></span>
-		  <span class="autosave_status"></span>
-		</span>
+	  <div id="header">
+	    <div id="header-container" class="container">
+		    <div id="ipython_notebook" class="nav navbar-brand">
+			    <a href="/tree" title='dashboard'>
+			      <img src='/static/base/images/logo.png?v=641991992878ee24c6f3826e81054a0f' alt='Chaosnote'/>
+		      </a>
+		    </div>
+		    <span id="save_widget" class="save_widget">
+		      <span id="notebook_name" class="filename"></span>
+		      <span class="checkpoint_status"></span>
+		      <span class="autosave_status"></span>
+		    </span>
 
-		<span id="kernel_logo_widget">
-		  <img class="current_kernel_logo" alt="Current Kernel Logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
-		</span>  
+		    <span id="kernel_logo_widget">
+		      <img class="current_kernel_logo" alt="Current Kernel Logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
+		    </span>  
 
-		<span id="login_widget">
-		  <button id="logout" class="btn btn-sm navbar-btn">Logout</button>
-		</span>
+		    <span id="login_widget">
+		      <button id="logout" class="btn btn-sm navbar-btn">Logout</button>
+		    </span>
+      </div>
+	    <div id="menubar-container" class="container">
+		    <div id="menubar">
+		      <div id="menus" class="navbar navbar-default" role="navigation">
+			      <div class="container-fluid">
+            </div>
+          </div>
+        </div>
+      </div>
+		  <div id="maintoolbar" class="navbar">
+		    <div class="toolbar-inner navbar-inner navbar-nobg">
+			    <div id="maintoolbar-container" class="container">
+			      <div class="btn-group" id="save-notebook">
+			        <button class="btn btn-default" title="Save" data-jupyter-action="jupyter-notebook:save-notebook">
+			          <i class="fa-save fa"></i>
+			        </button>
+			      </div>
+			    </div>
+		    </div>
+		  </div>
 	  </div>
-	</div>
+	  <div class="lower-header-bar"></div>
+    </div>
     <div class="container full-height" style="width:100%;">
-	  <div class="row full-height">
+	    <div class="row full-height">
         <div class="col-xs-6 full-height">
           <div class="demo-control"><a href="#" class="source-clear">clear</a></div>
           <div class="source full-height" id="editor"><%= content %></div>
@@ -57,6 +78,6 @@
           <div class="result-html full-height"></div>
         </section>
       </div>
-	</div>
+	  </div>
   </body>
 </html>

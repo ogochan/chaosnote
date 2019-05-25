@@ -314,7 +314,7 @@ class Content {
 		this.last_modified = stat.mtime;
 		this.writable = ( stat.mode & 0o200 ) ? true: false;
 		
-		return (attribute());
+		return (this.attribute());
 /*
 		return ({
 			content: null,
