@@ -20,10 +20,11 @@ class Content {
 		let stat = Content.stat(user, path);
 
 		this.file_path = stat.file_path;
-		this.user = stat.user;
+		this.user = user;
 		this.stat = stat.stat;
 		this.name = stat.name
 		this.path = stat.path;
+		this.type = stat.type;
 		this.created = stat.created;
 		this.format = stat.format;
 		this.last_modified = stat.last_modified;
@@ -289,6 +290,7 @@ class Content {
 			ext = `.${Path.extname(this.file_path)}`;
 			path = `${checkpoint_dir}/${Path.basename(this.file_path, ext)}-checkpoint${ext}`;
 		}
+		//console.log(this.type);
 		if ( this.type == 'notebook' ) {
 			this.content.cells.forEach((cell) => {
 				let lines = [];
@@ -306,6 +308,7 @@ class Content {
 		if ( this.type == 'markdown' ) {
 			content_str = this.content;
 		}
+		//console.log(content_str);
 		Fs.writeFileSync(path, content_str);
 		stat = Fs.statSync(path);
 

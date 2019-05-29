@@ -128,26 +128,7 @@
 	</noscript>
 
 	<div id="header">
-	  <div id="header-container" class="container">
-		<div id="ipython_notebook" class="nav navbar-brand"><a href="/tree" title='dashboard'>
-			<img src='/static/base/images/logo.png?v=641991992878ee24c6f3826e81054a0f' alt='Jupyter Notebook'/>
-		  </a></div>
-
-		<span id="save_widget" class="save_widget">
-		  <span id="notebook_name" class="filename"></span>
-		  <span class="checkpoint_status"></span>
-		  <span class="autosave_status"></span>
-		</span>
-
-		<span id="kernel_logo_widget">
-		  <img class="current_kernel_logo" alt="Current Kernel Logo" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
-		</span>  
-
-		<span id="login_widget">
-		  <button id="logout" class="btn btn-sm navbar-btn">Logout</button>
-		</span>
-	  </div>
-	  <div class="header-bar"></div>
+	  <%- include('parts/top_header') %>
 
 	  <div id="menubar-container" class="container">
 		<div id="menubar">
