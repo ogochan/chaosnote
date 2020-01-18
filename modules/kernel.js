@@ -280,12 +280,14 @@ class Kernel {
 				socket_on_message(this.ws, 'iopub', _ident, _delim, _hmac, _header, _last_header, _gap, _content);
 			});
 		}
+		let stdin_socket = await create_connected_socket(ports.stdin_port, 'dealer');
 		this.hb = setInterval(() => {
 			this.check_kernel();
 		}, 10000);
 		return ({
 			shell: shell_socket,
 			iopub: iopub_socket,
+			stdin: stdin_socket,
 			hb: hb_socket
 		});
 	}
@@ -373,7 +375,7 @@ class Kernel {
 		return (msg[3].msg_id);
 	}
 	send(name, content) {
-		//console.log("socket:", name);
+		console.log("socket:", name);
 		//console.log(this.sockets);
 		//console.log("content: ", content);
 		let socket = this.sockets[name];

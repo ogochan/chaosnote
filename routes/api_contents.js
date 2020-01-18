@@ -36,6 +36,7 @@ function post_checkpoints(req, res, next) {
 	//console.log('params: ', req.params);
 
 	content = new Content(User.current(req), req.params.path);
+	//console.log(content);
 	content.load(true);
 	content.save(false);
 

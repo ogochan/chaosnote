@@ -188,7 +188,7 @@ class Content {
 					this.stat = Fs.statSync(path);
 				}
 			}
-			this.size = this.size;
+			this.size = this.stat.size;
 			if ( this.file_path.match(/\.ipynb$/) ) {
 				this.type = "notebook";
 				this.format = "json";
@@ -287,21 +287,24 @@ class Content {
 			catch {
 				Fs.mkdirSync(checkpoint_dir);
 			}
-			ext = `.${Path.extname(this.file_path)}`;
+			ext = Path.extname(this.file_path);
 			path = `${checkpoint_dir}/${Path.basename(this.file_path, ext)}-checkpoint${ext}`;
 		}
+		//console.log('save = ', path);
 		//console.log(this.type);
 		if ( this.type == 'notebook' ) {
 			this.content.cells.forEach((cell) => {
-				let lines = [];
-				if ( cell.source != '' ) {
-					let source = cell.source.split('\n');
-					source.slice(0,-1).forEach((line) => {
-						lines.push(line + '\n');
-					});
-					lines.push(source.slice(-1)[0]);
+				if ( typeof cell.source === 'string' ) {
+					let lines = [];
+					if ( cell.source != '' ) {
+						let source = cell.source.split('\n');
+						source.slice(0,-1).forEach((line) => {
+							lines.push(line + '\n');
+						});
+						lines.push(source.slice(-1)[0]);
+					}
+					cell.source = lines;
 				}
-				cell.source = lines;
 			});
 			content_str = JSON.stringify(this.content, null, " ");
 		} else
