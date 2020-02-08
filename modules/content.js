@@ -123,12 +123,8 @@ class Content {
 		let type;
 		let mime_type;
 		let dir = make_path(BASE_DIR, user);
-	console.log('dir', dir);
-	console.log('path', path);
 		let fn = make_path(dir, path);
-	console.log('fn', fn);
 		let _stat = Fs.statSync(fn);
-	console.log('fn', fn);
 		let ext = Path.extname(path);
 		let size;
 
@@ -317,8 +313,6 @@ class Content {
 		if ( this.type == 'markdown' ) {
 			content_str = this.content;
 		}
-console.log(content_str);
-console.log(path);
 		Fs.writeFileSync(path, content_str);
 		stat = Fs.statSync(path);
 

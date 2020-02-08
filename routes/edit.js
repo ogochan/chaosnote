@@ -15,11 +15,11 @@ router.get('/:path(*)', is_authenticated, (req, res, next) => {
 	} else {
 		params_path = '';
 	}
-	console.log(params_path);
+//	console.log(params_path);
 
 	base = new Content(User.current(req), params_path);
 	base.load(false);
-	console.log(base);
+//	console.log(base);
 
 //	if ( base.type == 'markdown' ) {
 //		res.render('markdown/edit', {

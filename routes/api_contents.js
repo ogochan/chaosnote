@@ -65,7 +65,6 @@ function get(req, res, next) {
 		base.load(false);
 		base.content = null;
 	}
-console.log('base', base);
 	res.header("Content-Type", "application/json; charset=utf-8");
 	res.json(base);
 }
