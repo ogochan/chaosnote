@@ -123,8 +123,12 @@ class Content {
 		let type;
 		let mime_type;
 		let dir = make_path(BASE_DIR, user);
+	console.log('dir', dir);
+	console.log('path', path);
 		let fn = make_path(dir, path);
+	console.log('fn', fn);
 		let _stat = Fs.statSync(fn);
+	console.log('fn', fn);
 		let ext = Path.extname(path);
 		let size;
 
@@ -189,7 +193,7 @@ class Content {
 				}
 			}
 			this.size = this.stat.size;
-			if ( this.file_path.match(/\.ipynb$/) ) {
+			if ( path.match(/\.ipynb$/) ) {
 				this.type = "notebook";
 				this.format = "json";
 				content = JSON.parse(Fs.readFileSync(path, 'utf8'));
@@ -197,18 +201,20 @@ class Content {
 					cell.source = cell.source.join('');
 				});
 			} else {
-				if ( this.file_path.match(/.txt$/) ) {
+				if ( path.match(/.txt$/) ) {
 					this.type = 'file';
 					this.mime_type = 'text/plain';
+					content = Fs.readFileSync(path);
 				} else
-				if ( this.file_path.match(/.md$/) ) {
+				if ( path.match(/.md$/) ) {
 					this.type = 'markdown';
 					this.mime_type = 'text/plain';
+					content = Fs.readFileSync(path, 'utf-8');
 				} else {
 					this.type = 'file';
-					this.mime_type = Mime.getType(this.file_path);
+					this.mime_type = Mime.getType(path);
+					content = Fs.readFileSync(path);
 				}
-				content = Fs.readFileSync(this.file_path);
 			}
 		} else {
 			this.type = "directory";
@@ -311,7 +317,8 @@ class Content {
 		if ( this.type == 'markdown' ) {
 			content_str = this.content;
 		}
-		//console.log(content_str);
+console.log(content_str);
+console.log(path);
 		Fs.writeFileSync(path, content_str);
 		stat = Fs.statSync(path);
 

@@ -21,11 +21,16 @@ router.get('/:path(*)', is_authenticated, (req, res, next) => {
 	base.load(false);
 	console.log(base);
 
-	if ( base.type == 'markdown' ) {
-		res.render('markdown/edit', {
-			content: base.content
-		});
-	}
+//	if ( base.type == 'markdown' ) {
+//		res.render('markdown/edit', {
+//			content: base.content
+//		});
+//	}
+	res.render('edit', {
+		content: base.content,
+		path: req.params.path,
+		version_hash: '0.0'
+	});
 });
 
 router.post('/:path(*)', is_authenticated,  (req, res, next) => {

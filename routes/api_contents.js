@@ -38,7 +38,7 @@ function post_checkpoints(req, res, next) {
 	content = new Content(User.current(req), req.params.path);
 	//console.log(content);
 	content.load(true);
-	content.save(false);
+	content.save(true);
 
 	res.json({
 		id: "checkpoint",
@@ -65,7 +65,7 @@ function get(req, res, next) {
 		base.load(false);
 		base.content = null;
 	}
-
+console.log('base', base);
 	res.header("Content-Type", "application/json; charset=utf-8");
 	res.json(base);
 }
@@ -78,7 +78,7 @@ function put(req, res, next) {
 
 	content = new Content(User.current(req), req.params.path);
 	content.set_body(body.content);
-	content.save(true);
+	content.save(false);
 
 	res.json(content.attribute());
 }

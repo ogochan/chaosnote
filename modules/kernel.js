@@ -375,7 +375,7 @@ class Kernel {
 		return (msg[3].msg_id);
 	}
 	send(name, content) {
-		console.log("socket:", name);
+		//console.log("socket:", name);
 		//console.log(this.sockets);
 		//console.log("content: ", content);
 		let socket = this.sockets[name];
